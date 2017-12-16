@@ -1,4 +1,6 @@
 #include <RBD_Light.h>
+#include <RBD_Timer.h>
+#include <RBD_Button.h>
 
 class Led {
   #define OFF 0
@@ -36,7 +38,7 @@ class Led {
     if(state != PULSE) {
       int fadeInSpeed = random(1500, 2000);
       int fadeOutSpeed = fadeInSpeed - 500;
-      light->fade(fadeInSpeed, 250, fadeOutSpeed, 250);
+      light->fade(fadeInSpeed, 200, fadeOutSpeed, 250);
       state = PULSE;
     }
   }
@@ -53,7 +55,7 @@ class Led {
 };
 
 
-
+RBD::Button button(2);
 RBD::Timer timer;
 Led leds[] = { 5, 6, 7, 8, 9, 10, 11 };
 int ledsCount = 7;
@@ -81,7 +83,8 @@ void setup() {
 }
 
 void loop() {
-  if(timer.onRestart()) {
+  //if(timer.onRestart()) {
+  if(button.onPressed()) {
     updateState();
   }
   updateLights();
