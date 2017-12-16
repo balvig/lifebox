@@ -1,6 +1,5 @@
 #include <RBD_Light.h>
 
-
 class Led {
   #define OFF 0
   #define ON 1
@@ -8,7 +7,7 @@ class Led {
 
   int state = OFF;
   RBD::Light *light;
-  
+
   public:
   Led(int pin) {
     light = new RBD::Light(pin);
@@ -35,7 +34,7 @@ class Led {
   private:
   void pulse() {
     if(state != PULSE) {
-      int fadeInSpeed = random(1500, 2500);
+      int fadeInSpeed = random(1500, 2000);
       int fadeOutSpeed = fadeInSpeed - 500;
       light->fade(fadeInSpeed, 250, fadeOutSpeed, 250);
       state = PULSE;
@@ -54,16 +53,10 @@ class Led {
 };
 
 
-#define OFF 0
-#define ON 1
-#define PULSE 2
-
-
-Led leds[] = { 5, 6, 7, 8, 9, 10, 11 };
-int ledsCount = 7;
 
 RBD::Timer timer;
-
+Led leds[] = { 5, 6, 7, 8, 9, 10, 11 };
+int ledsCount = 7;
 
 void updateLights() {
   for (int i = 0; i < ledsCount; i++) {
@@ -72,7 +65,8 @@ void updateLights() {
 }
 
 void updateState() {
-  int results[] = { OFF, OFF, ON, OFF, OFF, PULSE, OFF };
+  // int results[] = { OFF, OFF, ON, OFF, OFF, PULSE, PULSE };
+  int results[] = { random(2), random(2), random(2), random(2), random(3), random(3), random(3) };
   int resultsCount = 7;
   for (int i = 0; i < resultsCount; i++) {
     int state = results[i];
@@ -81,7 +75,7 @@ void updateState() {
 }
 
 void setup() {
-  timer.setTimeout(2000);
+  timer.setTimeout(10000);
   timer.restart();
   updateState();
 }
