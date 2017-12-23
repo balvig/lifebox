@@ -31,8 +31,9 @@ namespace Lifebox  {
       int _times;
       int _pwm_value = 0;
       bool _forever  = false;
+      void _setupPin();
       void _stopEverything();
-      void _ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax = 255);
+      void _writePwm();
       // blinking
       bool _blinking;
       void _blink();

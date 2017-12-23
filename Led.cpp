@@ -16,10 +16,7 @@ namespace Lifebox {
   Led::Led(int pin)
   : _up_timer(), _on_timer(), _down_timer(), _off_timer() {
     _pin = pin;
-    _channel = _count;
-    ledcSetup(_channel, LEDC_BASE_FREQ, LEDC_TIMER_BITS);
-    ledcAttachPin(_pin, _channel); // pinMode(_pin, OUTPUT);
-    _count++;
+    _setupPin();
   }
   
   void Led::setState(int newState) {
@@ -67,7 +64,7 @@ namespace Lifebox {
     }
     if(_pwm_value != value) {
       _pwm_value = constrain(value, 0, 255);
-      _ledcAnalogWrite(_channel, _pwm_value); //analogWrite(_pin, _pwm_value);
+      _writePwm();
     }
   }
 
@@ -129,12 +126,27 @@ namespace Lifebox {
     _startFading();
   }
 
-
   // Private
- 
-  void Led::_ledcAnalogWrite(uint8_t channel, uint32_t value, uint32_t valueMax) {
-    uint32_t duty = (8191 / valueMax) * min(value, valueMax);
-    ledcWrite(channel, duty);
+
+  void Led::_setupPin() {
+    #ifdef ESP_PLATFORM
+      _channel = _count;
+      ledcSetup(_channel, LEDC_BASE_FREQ, LEDC_TIMER_BITS);
+      ledcAttachPin(_pin, _channel);
+       _count++;
+    #else
+      pinMode(_pin, OUTPUT);
+    #endif
+  }
+
+  void Led::_writePwm() {
+    #ifdef ESP_PLATFORM
+      uint32_t valueMax = 255;
+      uint32_t duty = (8191 / valueMax) * min(_pwm_value, valueMax);
+      ledcWrite(_channel, duty);
+    #else
+      analogWrite(_pin, _pwm_value);
+    #endif
   }
 
   void Led::_blink() {
