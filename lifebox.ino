@@ -1,9 +1,11 @@
 // Libs
 #include "Led.h"
+#include <WiFi.h>
 
 // Variables
 RBD::Timer timer;
 Lifebox::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
+Lifebox::Led debugLed(2); // Built-in LED
 
 
 // Constants
@@ -11,10 +13,12 @@ Lifebox::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
 
 // Main
 void setup() {
+  delay(10);
+  Serial.begin(115200);
   timer.setTimeout(5000);
   timer.restart();
+  connectToWifi();
   updateState();
-  Serial.begin(115200);
 }
 
 void loop() {
@@ -29,15 +33,25 @@ void updateLights() {
   for (int i = 0; i < LED_COUNT; i++) {
     leds[i].update();
   }
+  debugLed.update();
 }
 
 void updateState() {
-  int results[] = { random(3), random(3) , random(3), random(2), random(2), random(2), random(2) };
+  if(WiFi.status() != WL_CONNECTED) {
+    debugLed.blink(300, 300);
+  }
+  else {
+    debugLed.on();
+    int results[] = { random(3), random(3) , random(3), random(2), random(2), random(2), random(2) };
 
-  for (int i = 0; i < LED_COUNT; i++) {
-    int state = results[i];
-    leds[i].setState(state);
+    for (int i = 0; i < LED_COUNT; i++) {
+      int state = results[i];
+      leds[i].setState(state);
+    }
   }
 }
 
+void connectToWifi() {
+  WiFi.begin(".........", ".........");
+}
 
