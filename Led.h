@@ -1,5 +1,5 @@
-#ifndef LIFEBOX_LED_H
-#define LIFEBOX_LED_H
+#ifndef Lifebox_led_h
+#define Lifebox_led_h
 
 #include <Arduino.h>
 #include <RBD_Timer.h>

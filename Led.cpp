@@ -184,11 +184,9 @@ namespace Lifebox {
   }
   
   void Led::_pulse() {
-    if(!_fading) {
-      int fadeInSpeed = random(1500, 2000);
-      int fadeOutSpeed = fadeInSpeed - 500;
-      fade(fadeInSpeed, 200, fadeOutSpeed, 250);
-    }
+    int fadeInSpeed = random(1500, 2000);
+    int fadeOutSpeed = fadeInSpeed - 500;
+    fade(fadeInSpeed, 200, fadeOutSpeed, 250);
   }
 
   void Led::_fade() {

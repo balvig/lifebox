@@ -48,6 +48,8 @@ void updateState() {
   if (WiFi.status() == WL_CONNECTED) {
     // Need to figure out how to make this non-blocking
     String results = fetchResults();
+
+    // All this to turn csv into an array
     char charBuf[50];
     results.toCharArray(charBuf, 50);
     char *token = strtok(charBuf, ",");
@@ -56,13 +58,7 @@ void updateState() {
     while (token) {
       String tokenString = token;
       int state = tokenString.toInt();
-      Serial.print(i);
-      Serial.print(": ");
-      Serial.print(state);
-      Serial.println("");
-
       leds[i].setState(state);
-
       token = strtok(NULL, ",");
       i++;
     }
@@ -86,7 +82,6 @@ String fetchResults() {
     if (httpCode == HTTP_CODE_OK) {
       String payload = http.getString();
       http.end();
-      Serial.println(payload);
       return payload;
     }
   }
