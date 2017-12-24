@@ -9,6 +9,7 @@ namespace Lifebox  {
     public:
       Api(String endpoint);
       String fetch();
+      enum {PENDING, SUCCESS, FAILED} status;
     private:
       HTTPClient _http;
       String _endpoint;

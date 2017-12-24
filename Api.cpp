@@ -10,21 +10,19 @@ namespace Lifebox {
   String Api::fetch() {
     _http.begin(_endpoint);
 
+    String result = "";
     int httpCode = _http.GET();
   
-    if (httpCode > 0) {
-      Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-  
-      if (httpCode == HTTP_CODE_OK) {
-        String payload = _http.getString();
-        _http.end();
-        return payload;
-      }
+    if (httpCode == HTTP_CODE_OK) {
+      status = SUCCESS;
+      result = _http.getString();
     }
     else {
-      _http.end();
-      return "";
+      status = FAILED;
     }
+    
+    _http.end();
+    return result;
   }
 }
 
