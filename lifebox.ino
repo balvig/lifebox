@@ -8,11 +8,11 @@
 RBD::Timer timer;
 Lifebox::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
 Lifebox::Led debugLed(2); // Built-in LED
+HTTPClient http;
 
 // Constants
 #define REFRESH_INTERVAL 50000
 #define LED_COUNT sizeof(leds) / sizeof(Lifebox::Led)
-
 #define API_ENDPOINT "http://1b524aa3.ngrok.io/lifebox"
 
 // Main
@@ -21,6 +21,8 @@ void setup() {
   Serial.begin(115200);
   timer.setTimeout(REFRESH_INTERVAL);
   timer.restart();
+  http.setReuse(true);
+  
   connectToWifi();
   updateState();
 }
@@ -74,7 +76,6 @@ void connectToWifi() {
 }
 
 String fetchResults() {
-  HTTPClient http;
   http.begin(API_ENDPOINT);
 
   int httpCode = http.GET();
