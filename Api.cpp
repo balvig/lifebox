@@ -5,6 +5,7 @@ namespace Lifebox {
   Api::Api(String endpoint) {
     _endpoint = endpoint;
     _http.setReuse(true);
+    _http.setTimeout(10000);
   }
   
   String Api::fetch() {

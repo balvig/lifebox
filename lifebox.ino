@@ -12,7 +12,7 @@ Lifebox::Api api("http://starter-api-production.herokuapp.com/lifebox");
 
 // Constants
 #define INITIAL_INTERVAL 1000
-#define REFRESH_INTERVAL 50000
+#define REFRESH_INTERVAL 600000 // 10 minutes
 #define LED_COUNT sizeof(leds) / sizeof(Lifebox::Led)
 
 // Main
@@ -21,7 +21,6 @@ void setup() {
   Serial.begin(115200);
 
   testLights();
-
   connectToWifi();
   
   updateTimer.setTimeout(INITIAL_INTERVAL);
