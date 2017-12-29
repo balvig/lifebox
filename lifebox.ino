@@ -11,7 +11,7 @@ Lifebox::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
 Lifebox::Api api("http://starter-api-production.herokuapp.com/lifebox");
 
 // Constants
-#define SLEEPING_INTERVAL 600000 // 10 minutes
+#define SLEEPING_INTERVAL 900000 // 15 minutes
 #define LED_COUNT sizeof(leds) / sizeof(Lifebox::Led)
 
 // Main
