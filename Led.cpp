@@ -28,7 +28,7 @@ namespace Lifebox {
         off();
         break;
       case PULSE:
-        _pulse();
+        pulse();
         break;
     }
   }
@@ -40,6 +40,14 @@ namespace Lifebox {
   void Led::off(bool _stop_everything) { // default: true
     setBrightness(0, _stop_everything);
   }
+
+    
+  void Led::pulse() {
+    int fadeInSpeed = random(1500, 2000);
+    int fadeOutSpeed = fadeInSpeed - 500;
+    fade(fadeInSpeed, 200, fadeOutSpeed, 250);
+  }
+
 
   bool Led::isOn() {
     return getBrightness() == 255;
@@ -183,12 +191,6 @@ namespace Lifebox {
     return _off_timer.isExpired();
   }
   
-  void Led::_pulse() {
-    int fadeInSpeed = random(1500, 2000);
-    int fadeOutSpeed = fadeInSpeed - 500;
-    fade(fadeInSpeed, 200, fadeOutSpeed, 250);
-  }
-
   void Led::_fade() {
     switch(_state) {
       case _RISING:

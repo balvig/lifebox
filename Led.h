@@ -11,6 +11,7 @@ namespace Lifebox  {
       void setState(int newState);
       void on(bool _stop_everything = true);  // turn on the light, stop everything is for internal use only
       void off(bool _stop_everything = true); // turn off the light, stop everything is for internal use only
+      void pulse();                           // "breathing" light
       bool isOn();                            // returns true when the light is at 100% brightness
       bool isOff();                           // returns true when the ligh is at 0% brightness
       void update();                          // process real-time methods
@@ -46,7 +47,6 @@ namespace Lifebox  {
       // fading
       bool _fading;
       enum {_RISING, _MAX, _FALLING, _MIN} _state;  // internal state
-      void _pulse();
       void _fade();
       void _rising();
       void _onMax();
