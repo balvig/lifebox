@@ -12,6 +12,8 @@ Lifebox::Api api("http://starter-api-production.herokuapp.com/lifebox");
 
 // Constants
 #define SLEEPING_INTERVAL 900000 // 15 minutes
+//#define SLEEPING_INTERVAL 10000 // 15 minutes
+#define WIFI_POLL 600
 #define LED_COUNT sizeof(leds) / sizeof(Lifebox::Led)
 
 // Main
@@ -35,16 +37,10 @@ void loop() {
 
 // Private
 void updateState() {
-  connectToWifi();
-  while (WiFi.status() != WL_CONNECTED) {
-    debugLed.on();
-    delay(150); // blocking all the things
-    debugLed.off();
-    delay(150); // blocking all the things
+  if (connectToWifi(10)) {
+    syncWithApi();
+    disconnectFromWifi();
   }
-
-  syncWithApi();
-  WiFi.disconnect();
 }
 
 
@@ -66,8 +62,24 @@ void syncWithApi() {
   }
 }
 
-void connectToWifi() {
+bool connectToWifi(int tries) {
   WiFi.begin(LIFEBOX_WIFI_NAME, LIFEBOX_WIFI_PASS);
+  
+  for(int i = 0; i < tries; i++) {
+    int wifiStatus = WiFi.status();
+    debugLed.on();
+    delay(WIFI_POLL); // blocking all the things
+    debugLed.off();
+    delay(WIFI_POLL); // blocking all the things
+
+    Serial.println(wifiStatus);
+    if (wifiStatus == WL_CONNECTED) {
+      return true;
+    }
+  }
+
+  debugLed.pulse();
+  return false;
 }
 
 void disconnectFromWifi() {
