@@ -4,17 +4,19 @@
 #include "Api.h"
 #include <WiFi.h>
 
+// Configuration
+const int SLEEPING_INTERVAL = 900000; // 15 minutes
+const int WIFI_POLL = 600;
+const size_t JSON_BUFFER = JSON_ARRAY_SIZE(7) + JSON_OBJECT_SIZE(1) + 30;
+const String API_ENDPOINT = "http://starter-api-production.herokuapp.com/lifebox";
+
 // Variables
 RBD::Timer updateTimer;
 Lifebox::Led debugLed(2); // Built-in LED
 Lifebox::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
-Lifebox::Api api("http://starter-api-production.herokuapp.com/lifebox");
+const int LED_COUNT = sizeof(leds) / sizeof(Lifebox::Led);
+Lifebox::Api api(API_ENDPOINT, JSON_BUFFER);
 
-// Constants
-#define SLEEPING_INTERVAL 900000 // 15 minutes
-//#define SLEEPING_INTERVAL 10000 // 15 minutes
-#define WIFI_POLL 600
-#define LED_COUNT sizeof(leds) / sizeof(Lifebox::Led)
 
 // Main
 void setup() {
@@ -45,20 +47,12 @@ void updateState() {
 
 
 void syncWithApi() {
-  String results = api.fetch();
+  JsonObject& root = api.fetchJson();
+  JsonArray& ledValues = root["led_values"];
 
-  // All this to turn csv into an array
-  char charBuf[50];
-  results.toCharArray(charBuf, 50);
-  char *token = strtok(charBuf, ",");
-  int i = 0;
-
-  while (token) {
-    String tokenString = token;
-    int state = tokenString.toInt();
+  for (int i = 0; i < LED_COUNT; i++) {
+    int state = ledValues[i];
     leds[i].setState(state);
-    token = strtok(NULL, ",");
-    i++;
   }
 }
 

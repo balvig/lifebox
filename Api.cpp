@@ -2,12 +2,20 @@
 #include "Api.h"
 
 namespace Lifebox {
-  Api::Api(String endpoint) {
+  Api::Api(String endpoint, size_t bufferSize) {
     _endpoint = endpoint;
+    _bufferSize = bufferSize;
     _http.setTimeout(10000);
   }
-  
-  String Api::fetch() {
+
+  JsonObject& Api::fetchJson() {
+    String results = _fetchRaw();
+    DynamicJsonBuffer jsonBuffer(_bufferSize);
+    return jsonBuffer.parseObject(results);
+  }
+
+  // Private
+  String Api::_fetchRaw() {
     _http.begin(_endpoint);
 
     String result = "";
