@@ -4,7 +4,7 @@
 
 namespace Lifebox {
   // LEDC for ESP-32
-  #define LEDC_TIMER_BITS 13
+  #define LEDC_RESOLUTION 13
   #define LEDC_BASE_FREQ 5000
   
   #define OFF 0
@@ -139,7 +139,7 @@ namespace Lifebox {
   void Led::_setupPin() {
     #ifdef ESP_PLATFORM
       _channel = _count;
-      ledcSetup(_channel, LEDC_BASE_FREQ, LEDC_TIMER_BITS);
+      ledcSetup(_channel, LEDC_BASE_FREQ, LEDC_RESOLUTION);
       ledcAttachPin(_pin, _channel);
        _count++;
     #else

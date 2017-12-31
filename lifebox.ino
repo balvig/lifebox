@@ -2,11 +2,13 @@
 #include "Config.h"
 #include "Led.h"
 #include "Api.h"
-#include <WiFi.h>
+#include "WiFi.h"
 
 // Configuration
 const int SLEEPING_INTERVAL = 900000; // 15 minutes
 const int WIFI_POLL = 600;
+const int WIFI_RETRIES = 10;
+const int LOOP_SLEEP = 50;
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(7) + JSON_OBJECT_SIZE(1) + 30; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://starter-api-production.herokuapp.com/lifebox";
 
@@ -35,11 +37,12 @@ void loop() {
     updateState();
   }
   updateLights();
+  delay(LOOP_SLEEP);
 }
 
 // Private
 void updateState() {
-  if (connectToWifi(10)) {
+  if (connectToWifi(WIFI_RETRIES)) {
     syncWithApi();
     disconnectFromWifi();
   }
