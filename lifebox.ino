@@ -7,15 +7,15 @@
 // Configuration
 const int SLEEPING_INTERVAL = 900000; // 15 minutes
 const int WIFI_POLL = 600;
-const size_t JSON_BUFFER = JSON_ARRAY_SIZE(7) + JSON_OBJECT_SIZE(1) + 30;
+const size_t JSON_BUFFER = JSON_ARRAY_SIZE(7) + JSON_OBJECT_SIZE(1) + 30; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://starter-api-production.herokuapp.com/lifebox";
 
 // Variables
 RBD::Timer updateTimer;
 Lifebox::Led debugLed(2); // Built-in LED
 Lifebox::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
-const int LED_COUNT = sizeof(leds) / sizeof(Lifebox::Led);
 Lifebox::Api api(API_ENDPOINT, JSON_BUFFER);
+const int LED_COUNT = sizeof(leds) / sizeof(Lifebox::Led);
 
 
 // Main
@@ -44,7 +44,6 @@ void updateState() {
     disconnectFromWifi();
   }
 }
-
 
 void syncWithApi() {
   JsonObject& root = api.fetchJson();
