@@ -2,7 +2,12 @@
 #include "Config.h"
 #include "Led.h"
 #include "Api.h"
-#include "WiFi.h"
+
+#ifdef ESP_PLATFORM
+  #include "WiFi.h"
+#else
+  #include "ESP8266WiFi.h"
+#endif  
 
 // Configuration
 const int SLEEPING_INTERVAL = 1800000; // 30 minutes
@@ -14,10 +19,10 @@ const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/kitchen";
 
 // Variables
 RBD::Timer updateTimer;
-Lifebox::Led debugLed(2); // Built-in LED
-Lifebox::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
-Lifebox::Api api(API_ENDPOINT, JSON_BUFFER);
-const int LED_COUNT = sizeof(leds) / sizeof(Lifebox::Led);
+Lifeboxes::Led debugLed(2); // Built-in LED
+Lifeboxes::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
+Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
+const int LED_COUNT = sizeof(leds) / sizeof(Lifeboxes::Led);
 
 
 // Main
@@ -56,7 +61,7 @@ void syncWithApi() {
 }
 
 bool connectToWifi(int tries) {
-  WiFi.begin(LIFEBOX_WIFI_NAME, LIFEBOX_WIFI_PASS);
+  WiFi.begin(LIFEBOXES_WIFI_NAME, LIFEBOXES_WIFI_PASS);
   
   for(int i = 0; i < tries; i++) {
     int wifiStatus = WiFi.status();

@@ -1,2 +1,2 @@
-#define LIFEBOX_WIFI_NAME "............."
-#define LIFEBOX_WIFI_PASS "............."
+#define LIFEBOXES_WIFI_NAME "............."
+#define LIFEBOXES_WIFI_PASS "............."

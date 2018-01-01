@@ -1,7 +1,6 @@
-#include <Arduino.h>
 #include "Api.h"
 
-namespace Lifebox {
+namespace Lifeboxes {
   Api::Api(String endpoint, size_t bufferSize) {
     _endpoint = endpoint;
     _bufferSize = bufferSize;

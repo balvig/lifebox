@@ -1,8 +1,6 @@
-#include <Arduino.h>
-#include <RBD_Timer.h> // https://github.com/alextaujenis/RBD_Timer
 #include "Led.h"
 
-namespace Lifebox {
+namespace Lifeboxes {
   // LEDC for ESP-32
   #define LEDC_RESOLUTION 13
   #define LEDC_BASE_FREQ 5000

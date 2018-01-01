@@ -1,11 +1,16 @@
-#ifndef Lifebox_api_h
-#define Lifebox_api_h
+#ifndef Lifeboxes_api_h
+#define Lifeboxes_api_h
 
-#include <Arduino.h>
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
+#include "Arduino.h"
+#include "ArduinoJson.h"
 
-namespace Lifebox  {
+#ifdef ESP_PLATFORM
+  #include "HTTPClient.h"
+#else
+  #include "ESP8266HTTPClient.h"
+#endif
+
+namespace Lifeboxes  {
   class Api {
     public:
       Api(String endpoint, const size_t bufferSize);

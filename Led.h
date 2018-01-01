@@ -1,10 +1,10 @@
-#ifndef Lifebox_led_h
-#define Lifebox_led_h
+#ifndef Lifeboxes_led_h
+#define Lifeboxes_led_h
 
-#include <Arduino.h>
-#include <RBD_Timer.h>
+#include "Arduino.h"
+#include "RBD_Timer.h" // https://github.com/alextaujenis/RBD_Timer
 
-namespace Lifebox  {
+namespace Lifeboxes  {
   class Led {
     public:
       Led(int pin);
