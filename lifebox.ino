@@ -5,12 +5,12 @@
 #include "WiFi.h"
 
 // Configuration
-const int SLEEPING_INTERVAL = 900000; // 15 minutes
+const int SLEEPING_INTERVAL = 1800000; // 30 minutes
 const int WIFI_POLL = 600;
 const int WIFI_RETRIES = 10;
 const int LOOP_SLEEP = 25;
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(7) + JSON_OBJECT_SIZE(1) + 30; // http://arduinojson.org/assistant/
-const String API_ENDPOINT = "http://starter-api-production.herokuapp.com/lifebox";
+const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/kitchen";
 
 // Variables
 RBD::Timer updateTimer;
