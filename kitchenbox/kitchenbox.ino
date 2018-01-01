@@ -1,18 +1,10 @@
 // Libs
-#include "Config.h"
 #include "Led.h"
+#include "Net.h"
 #include "Api.h"
-
-#ifdef ESP_PLATFORM
-  #include "WiFi.h"
-#else
-  #include "ESP8266WiFi.h"
-#endif  
 
 // Configuration
 const int SLEEPING_INTERVAL = 1800000; // 30 minutes
-const int WIFI_POLL = 600;
-const int WIFI_RETRIES = 10;
 const int LOOP_SLEEP = 25;
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(7) + JSON_OBJECT_SIZE(1) + 30; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/kitchen";
@@ -21,6 +13,7 @@ const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/kitchen";
 RBD::Timer updateTimer;
 Lifeboxes::Led debugLed(2); // Built-in LED
 Lifeboxes::Led leds[] = { 12, 14, 27, 26, 25, 33, 32 };
+Lifeboxes::Net net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
 const int LED_COUNT = sizeof(leds) / sizeof(Lifeboxes::Led);
 
@@ -44,10 +37,14 @@ void loop() {
 
 // Private
 void updateState() {
-  if (connectToWifi(WIFI_RETRIES)) {
+  debugLed.on();
+  
+  if (net.connect()) {
     syncWithApi();
-    disconnectFromWifi();
+    net.disconnect();
   }
+  
+  debugLed.off();
 }
 
 void syncWithApi() {
@@ -58,30 +55,6 @@ void syncWithApi() {
     int state = ledValues[i];
     leds[i].setState(state);
   }
-}
-
-bool connectToWifi(int tries) {
-  WiFi.begin(LIFEBOXES_WIFI_NAME, LIFEBOXES_WIFI_PASS);
-  
-  for(int i = 0; i < tries; i++) {
-    int wifiStatus = WiFi.status();
-    debugLed.on();
-    delay(WIFI_POLL); // blocking all the things
-    debugLed.off();
-    delay(WIFI_POLL); // blocking all the things
-
-    Serial.println(wifiStatus);
-    if (wifiStatus == WL_CONNECTED) {
-      return true;
-    }
-  }
-
-  debugLed.pulse();
-  return false;
-}
-
-void disconnectFromWifi() {
-  WiFi.disconnect();
 }
 
 void testLights() {
