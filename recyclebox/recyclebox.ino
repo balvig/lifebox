@@ -4,10 +4,10 @@
 #include "Servo.h"
 
 // Configuration
-//const int SLEEPING_INTERVAL = 3600000; // 60 minutes
-const int SLEEPING_INTERVAL = 10000; // 10 sec
+const int SLEEPING_INTERVAL = 3600000; // 60 minutes
+//const int SLEEPING_INTERVAL = 10000; // 10 sec
 const size_t JSON_BUFFER = JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/assistant/
-const String API_ENDPOINT = "http://b3ea1612.ngrok.io/recycle";
+const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/recycle";
 
 // Variables
 Lifeboxes::Net net;
