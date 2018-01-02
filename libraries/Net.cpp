@@ -6,6 +6,9 @@ namespace Lifeboxes {
   Net::Net() {}
 
   bool Net::connect(int tries) {
+    WiFi.mode(WIFI_STA);
+    disconnect();
+    delay(100);
     WiFi.begin(LIFEBOXES_WIFI_NAME, LIFEBOXES_WIFI_PASS);
   
     for(int i = 0; i < tries; i++) {
