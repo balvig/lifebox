@@ -6,6 +6,7 @@
 
 // Configuration
 const int SLEEPING_INTERVAL = 1800000; // 30 minutes
+//const int SLEEPING_INTERVAL = 30000; // 30 seconds
 const int LOOP_SLEEP = 25;
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(3) + 80; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/weather";
@@ -26,7 +27,6 @@ void setup() {
   testLights();
   updateTimer.setTimeout(SLEEPING_INTERVAL);
   updateTimer.restart();
-  lcdMessage("Connecting...");
   updateState();
 }
 
@@ -40,6 +40,7 @@ void loop() {
 
 // Private
 void updateState() {
+  lcdMessage("Connecting...");
   if (net.connect()) {
     syncWithApi();
     net.disconnect();
