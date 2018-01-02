@@ -17,28 +17,17 @@ Servo hand;
 // Main
 void setup() {
   Serial.begin(115200);
-  hand.attach(0);
-  net.connect();
+  hand.attach(16);
+  net.connect(); // For some reason Wemos D1 won't reconnect after disconnect so keeping connected
 }
 
 void loop() {
-  updateState();
+  syncWithApi();
   delay(SLEEPING_INTERVAL);
-}
-
-// Private
-void updateState() {
-  Serial.println("Updating....");
- // if (net.connect()) {
-    syncWithApi();
-    //net.disconnect();
-  //}
 }
 
 void syncWithApi() {
   JsonObject& root = api.fetchJson();
   int degrees = root["degrees"];
-  Serial.print("Moving to: ");
-  Serial.println(degrees);
   hand.write(degrees);
 }
