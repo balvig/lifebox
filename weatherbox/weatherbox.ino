@@ -8,17 +8,14 @@
 const int SLEEPING_INTERVAL = 1800000; // 30 minutes
 const int LOOP_SLEEP = 25;
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(3) + 80; // http://arduinojson.org/assistant/
-//const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/weather";
-const String API_ENDPOINT = "http://a7df2682.ngrok.io/weather";
+const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/weather";
 
 // Variables
 RBD::Timer updateTimer;
 Adafruit_SSD1306 lcd;
-Lifeboxes::Led debugLed(2); // Built-in LED
 Lifeboxes::Led leds[] = { 12, 14, 27 };
 Lifeboxes::Net net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
-const int LED_COUNT = sizeof(leds) / sizeof(Lifeboxes::Led);
 
 
 // Main
@@ -43,8 +40,6 @@ void loop() {
 
 // Private
 void updateState() {
-  debugLed.on();
-
   if (net.connect()) {
     syncWithApi();
     net.disconnect();
@@ -52,8 +47,6 @@ void updateState() {
   else {
     lcdMessage("Wifi connection error");
   }
-  
-  debugLed.off();
 }
 
 void syncWithApi() {
@@ -119,5 +112,4 @@ void updateLights() {
   for (auto &led : leds) {
     led.update();
   }
-  debugLed.update();
 }
