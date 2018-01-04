@@ -1,22 +1,24 @@
 #include "Led.h"
 
 namespace Lifeboxes {
-  // LEDC for ESP-32
-  #define LEDC_RESOLUTION 13
-  #define LEDC_BASE_FREQ 5000
-  
+  // Use LEDC for ESP-32
+  #ifdef ESP_PLATFORM
+    #define LEDC_RESOLUTION 13
+    #define LEDC_BASE_FREQ 5000
+    #define LEDC_MAX_VALUE 255
+    #define LEDC_DUTY_RATIO = 8191
+  #endif
+
   #define OFF 0
   #define ON 1
   #define PULSE 2
 
-  int Led::_count = 0;
-  
   Led::Led(int pin)
   : _up_timer(), _on_timer(), _down_timer(), _off_timer() {
     _pin = pin;
     _setupPin();
   }
-  
+
   void Led::setState(int newState) {
     switch(newState) {
       case ON:
@@ -39,7 +41,7 @@ namespace Lifeboxes {
     setBrightness(0, _stop_everything);
   }
 
-    
+
   void Led::pulse() {
     int fadeInSpeed = random(1500, 2000);
     int fadeOutSpeed = fadeInSpeed - 500;
@@ -134,27 +136,6 @@ namespace Lifeboxes {
 
   // Private
 
-  void Led::_setupPin() {
-    #ifdef ESP_PLATFORM
-      _channel = _count;
-      ledcSetup(_channel, LEDC_BASE_FREQ, LEDC_RESOLUTION);
-      ledcAttachPin(_pin, _channel);
-       _count++;
-    #else
-      pinMode(_pin, OUTPUT);
-    #endif
-  }
-
-  void Led::_writePwm() {
-    #ifdef ESP_PLATFORM
-      uint32_t valueMax = 255;
-      uint32_t duty = (8191 / valueMax) * min(_pwm_value, valueMax);
-      ledcWrite(_channel, duty);
-    #else
-      analogWrite(_pin, _pwm_value);
-    #endif
-  }
-
   void Led::_blink() {
     if(isOn() && _shouldBlinkOff()) {
       _blinkOff();
@@ -188,7 +169,7 @@ namespace Lifeboxes {
   bool Led::_shouldBlinkOn() {
     return _off_timer.isExpired();
   }
-  
+
   void Led::_fade() {
     switch(_state) {
       case _RISING:
@@ -302,9 +283,27 @@ namespace Lifeboxes {
     _blinking = false;
   }
 
+  void Led::_setupPin() {
+    #ifdef ESP_PLATFORM
+      _channel = _count;
+      ledcSetup(_channel, LEDC_BASE_FREQ, LEDC_RESOLUTION);
+      ledcAttachPin(_pin, _channel);
+       _count++;
+    #else
+      pinMode(_pin, OUTPUT);
+    #endif
+  }
+
+  void Led::_writePwm() {
+    #ifdef ESP_PLATFORM
+      uint32_t duty = (LEDC_DUTY_RATIO / LEDC_MAX_VALUE) * min(_pwm_value, LEDC_MAX_VALUE);
+      ledcWrite(_channel, duty);
+    #else
+      analogWrite(_pin, _pwm_value);
+    #endif
+  }
+
   void Led::_stopEverything() {
     _stopBlinking();
     _stopFading();
   }
-}
-

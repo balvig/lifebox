@@ -25,15 +25,19 @@ namespace Lifeboxes  {
       void blink(unsigned long on_time, unsigned long off_time);
       void fade(unsigned long up_time, unsigned long on_time, unsigned long down_time, unsigned long off_time);
     private:
+      // For ESP-32
+      #ifdef ESP_PLATFORM
+        static int _count = 0;
+        int _channel;
+      #endif
       // global
       static int _count;
       int _pin;
-      int _channel;
       int _times;
       int _pwm_value = 0;
       bool _forever  = false;
-      void _setupPin();
       void _stopEverything();
+      void _setupPin();
       void _writePwm();
       // blinking
       bool _blinking;
