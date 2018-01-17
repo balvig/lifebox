@@ -7,14 +7,15 @@
 // Configuration
 const int SLEEPING_INTERVAL = 1800000; // 30 minutes
 //const int SLEEPING_INTERVAL = 30000; // 30 seconds
-const int LOOP_SLEEP = 25;
+const int REALTIME_LOOP_SLEEP = 25;
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(3) + 80; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/weather";
 
 // Variables
 RBD::Timer updateTimer;
 Adafruit_SSD1306 lcd;
-Lifeboxes::Led leds[] = { 12, 14, 27 };
+//Lifeboxes::Led leds[] = { 12, 14, 27 }; // ESP-32
+Lifeboxes::Led leds[] = { 12, 13, 15 }; // Wemos D1 mini
 Lifeboxes::Net net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
 
@@ -33,9 +34,10 @@ void setup() {
 void loop() {
   if (updateTimer.onRestart()) {
     updateState();
+    conserveBattery();
   }
   updateLights();
-  delay(LOOP_SLEEP);
+  delay(REALTIME_LOOP_SLEEP);
 }
 
 // Private
@@ -95,6 +97,20 @@ void lcdMessage(String message) {
   lcd.setTextColor(WHITE);
   lcd.println(message);
   lcd.display();
+}
+
+
+void conserveBattery() {
+  if (needRealtimeUpdates()) {
+    return;
+  }
+  else {
+    delay(REALTIME_LOOP_SLEEP);
+  }
+}
+    
+boolean needRealtimeUpdates() {
+  return true;
 }
 
 void testLights() {
