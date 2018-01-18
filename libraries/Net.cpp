@@ -12,7 +12,8 @@ namespace Lifeboxes {
       int wifiStatus = WiFi.status();
 
       delay(WIFI_POLLING_RATE); // blocking all the things
-  
+
+      Serial.print("Wifi Status:");
       Serial.println(wifiStatus);
       if (wifiStatus == WL_CONNECTED) {
         return true;
