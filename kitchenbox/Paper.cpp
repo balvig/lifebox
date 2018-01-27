@@ -1,11 +1,11 @@
 #include "Paper.h"
 
 namespace Lifeboxes {
-  //const GFXfont* FONT = &TomThumb;
+  //const GFXfont* FONT = &FreeSerif9pt7b;
   
   Paper::Paper(GxEPD_Class* display) : _display(display) {
     _display->init();
-    _display->setRotation(0);
+    _display->setRotation(2);
     //_display->setFont(FONT);
     _display->setTextColor(GxEPD_BLACK, GxEPD_WHITE);
   }

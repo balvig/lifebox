@@ -4,12 +4,8 @@
 #include "Arduino.h"
 #include <GxEPD.h>
 #include <GxGDE0213B1/GxGDE0213B1.h>      // 2.13" b/w
-//#include <GxIO/GxIO_SPI/GxIO_SPI.h>
-//#include <GxIO/GxIO.h>
 
-//#include <Fonts/TomThumb.h>
-//#include <Fonts/FreeMonoBold9pt7b.h>
-
+//#include <Fonts/FreeSerif9pt7b.h>
 
 namespace Lifeboxes  {
   class Paper {
