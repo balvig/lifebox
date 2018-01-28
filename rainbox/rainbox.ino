@@ -14,6 +14,26 @@ const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/weather";
 
 
 // Variables
+static const uint8_t PROGMEM
+  smile_bmp[] =
+  { B00111100,
+    B01000010,
+    B10100101,
+    B10000001,
+    B10100101,
+    B10011001,
+    B01000010,
+    B00111100 },
+  frown_bmp[] =
+  { B00111100,
+    B01000010,
+    B10100101,
+    B10000001,
+    B10011001,
+    B10100101,
+    B01000010,
+    B00111100 };
+    
 MLED matrix(5);
 RBD::Timer updateTimer;
 Lifeboxes::Net net;
@@ -23,43 +43,30 @@ Lifeboxes::Sky skies[] = { 1, 3, 5 };
 // Main
 void setup() {
   Serial.begin(115200);
+
+  showBootScreen();
+  updateState();
   updateTimer.setTimeout(UPDATE_INTERVAL);
   updateTimer.restart();
-  if(net.connect()) {
-    updateState();
-  }
 }
 
 void loop() {
   if (updateTimer.onRestart()) {
     updateState();
-  //  conserveBattery();
+    // conserveBattery();
   }
   animate();
 }
 
-void animate() {
-  matrix.clear();
-
-  for (auto &sky : skies) {
-    for (auto &raindrop : sky.raindrops) {
-      raindrop.update();
-      matrix.drawPixel(raindrop.x, raindrop.y, raindrop.active);
-    }
-  }
-
-  matrix.writeDisplay();
-}
-
 // Private
 void updateState() {
-//  if (net.connect()) {
+  if (net.connect()) {
     syncWithApi();
-  //  net.disconnect();
- // }
-//  else {
-    //lcdMessage("Wifi connection error");
-  //}
+    net.disconnect();
+  }
+  else {
+    showError();
+  }
 }
 
 void syncWithApi() {
@@ -77,6 +84,30 @@ void syncSkies(JsonArray& data) {
   }
 }
 
+void animate() {
+  matrix.clear();
+
+  for (auto &sky : skies) {
+    for (auto &raindrop : sky.raindrops) {
+      raindrop.update();
+      matrix.drawPixel(raindrop.x, raindrop.y, raindrop.active);
+    }
+  }
+
+  matrix.writeDisplay();
+}
+
+void showBootScreen() {
+  matrix.clear();
+  matrix.drawBitmap(0, 0, smile_bmp, 8, 8, LED_ON);
+  matrix.writeDisplay();
+}
+
+void showError() {
+  matrix.clear();
+  matrix.drawBitmap(0, 0, frown_bmp, 8, 8, LED_ON);
+  matrix.writeDisplay();
+}
 
 void conserveBattery() {
   if (needRealtimeUpdates()) {
