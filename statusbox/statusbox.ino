@@ -6,7 +6,6 @@
 #include "Api.h"
 
 // Configuration
-//const int SLEEPING_INTERVAL = 1800000; // 30 minutes
 const int SLEEPING_INTERVAL = 60000; // 60 seconds
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(1) + 130; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/status";
@@ -18,11 +17,9 @@ const int NUM_OF_SCREENS = 3;
 RBD::Timer updateTimer;
 RBD::Button leftButton(0);
 RBD::Button rightButton(2);
-#define OLED_RESET 0  // GPIO0
-Adafruit_SSD1306 lcd(OLED_RESET);
+Adafruit_SSD1306 lcd;
 Lifeboxes::Net net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
-
 int currentScreenIndex = 0;
 String screens[NUM_OF_SCREENS];
 
@@ -60,17 +57,23 @@ void loop() {
 // Private
 void updateState() {
   syncWithApi();
-  showCurrentScreen();
 }
 
 void syncWithApi() {
   JsonObject& json = api.fetchJson();
   JsonArray&data = json["screens"];
-  int dataSize = data.size(); 
-  
+  int dataSize = data.size();
+
   for (int i = 0; i < dataSize; i++) {
     String screen = data[i];
     screens[i] = screen;
+  }
+
+  if (dataSize > 0) {
+    showCurrentScreen();
+  }
+  else {
+    showError();
   }
 }
 
@@ -97,12 +100,7 @@ void nextScreen() {
 void showCurrentScreen() {
   String currentScreen = screens[currentScreenIndex];
 
-  if (currentScreen) {
-    lcdMessage(currentScreen);
-  }
-  else {
-    showError();
-  }
+  lcdMessage(currentScreen);
 }
 
 void lcdMessage(String message) {
@@ -115,5 +113,5 @@ void lcdMessage(String message) {
 }
 
 void showError() {
-  lcdMessage("Error: " + String(net.wifiStatus));
+  lcdMessage("Error\nWifi: " + String(net.wifiStatus));
 }
