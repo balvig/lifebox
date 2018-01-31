@@ -7,47 +7,56 @@
 
 // Configuration
 const int UPDATE_INTERVAL = 1800000; // 30 minutes
-const int REALTIME_LOOP_SLEEP = 25;
-const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(3) + 80; // http://arduinojson.org/assistant/
-const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/weather";
-//const String API_ENDPOINT = "http://b9bf9a06.ngrok.io/weather";
+const size_t JSON_BUFFER = JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/assistant/
+const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/rain";
+//const String API_ENDPOINT = "http://a3a58d21.ngrok.io/rain";
 
-
-// Variables
+// Images
 static const uint8_t PROGMEM
-  smile_bmp[] =
-  { B00111100,
-    B01000010,
-    B10100101,
-    B10000001,
-    B10100101,
-    B10011001,
-    B01000010,
-    B00111100 },
-  frown_bmp[] =
-  { B00111100,
-    B01000010,
-    B10100101,
-    B10000001,
-    B10011001,
-    B10100101,
-    B01000010,
-    B00111100 };
-    
+  checkBmp[] = { 
+    B00000000,
+    B00000001,
+    B00000010,
+    B00000100,
+    B10001000,
+    B01010000,
+    B00100000,
+    B00000000
+  },
+  upBmp[] = { 
+    B00000000,
+    B00011000,
+    B00111100,
+    B01111110,
+    B00011000,
+    B00011000,
+    B00011000,
+    B00000000
+  };
+
+// Variables    
 MLED matrix(5);
 RBD::Timer updateTimer;
 Lifeboxes::Net net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
-Lifeboxes::Sky skies[] = { 1, 3, 5 };
+Lifeboxes::Sky skies[] = { 0, 2, 4, 6 };
 
 // Main
 void setup() {
   Serial.begin(115200);
 
-  showBootScreen();
-  updateState();
-  updateTimer.setTimeout(UPDATE_INTERVAL);
-  updateTimer.restart();
+  showUpdating();
+  
+  if (net.connect()) { // Can't get wemos to reconnect after disconnect so leaving on fow now
+    updateState();
+    showSuccess();
+    delay(2000);
+    updateTimer.setTimeout(UPDATE_INTERVAL);
+    updateTimer.restart();
+  }
+  else {
+    showWifiState();
+  }
 }
 
 void loop() {
@@ -55,24 +64,19 @@ void loop() {
     updateState();
     // conserveBattery();
   }
+
   animate();
 }
 
 // Private
 void updateState() {
-  if (net.connect()) {
-    syncWithApi();
-    net.disconnect();
-  }
-  else {
-    showError();
-  }
+  syncWithApi();
 }
 
 void syncWithApi() {
   JsonObject& json = api.fetchJson();
 
-  syncSkies(json["led_values"]);
+  syncSkies(json["states"]);
 }
 
 void syncSkies(JsonArray& data) {
@@ -97,15 +101,25 @@ void animate() {
   matrix.writeDisplay();
 }
 
-void showBootScreen() {
+void showUpdating() {
   matrix.clear();
-  matrix.drawBitmap(0, 0, smile_bmp, 8, 8, LED_ON);
+  matrix.drawBitmap(0, 0, upBmp, 8, 8, LED_ON);
   matrix.writeDisplay();
 }
 
-void showError() {
+void showSuccess() {
   matrix.clear();
-  matrix.drawBitmap(0, 0, frown_bmp, 8, 8, LED_ON);
+  matrix.drawBitmap(0, 0, checkBmp, 8, 8, LED_ON);
+  matrix.writeDisplay();
+}
+
+void showWifiState() {
+  matrix.clear();
+  matrix.setTextSize(1);
+  matrix.setTextWrap(false);
+  matrix.setTextColor(LED_ON);
+  matrix.setCursor(1,1);
+  matrix.print(net.wifiStatus);
   matrix.writeDisplay();
 }
 
@@ -114,7 +128,8 @@ void conserveBattery() {
     return;
   }
   else {
-    delay(REALTIME_LOOP_SLEEP);
+    //deepsleep
+    //delay(REALTIME_LOOP_SLEEP);
   }
 }
     

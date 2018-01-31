@@ -9,12 +9,10 @@ namespace Lifeboxes {
     WiFi.begin(LIFEBOXES_WIFI_NAME, LIFEBOXES_WIFI_PASS);
   
     for(int i = 0; i < tries; i++) {
-      int wifiStatus = WiFi.status();
+      wifiStatus = WiFi.status();
 
       delay(WIFI_POLLING_RATE); // blocking all the things
 
-      Serial.print("Wifi Status:");
-      Serial.println(wifiStatus);
       if (wifiStatus == WL_CONNECTED) {
         return true;
       }

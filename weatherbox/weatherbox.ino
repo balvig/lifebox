@@ -14,8 +14,8 @@ const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/weather";
 // Variables
 RBD::Timer updateTimer;
 Adafruit_SSD1306 lcd;
-//Lifeboxes::Led leds[] = { 12, 14, 27 }; // ESP-32
-Lifeboxes::Led leds[] = { 12, 13, 15 }; // Wemos D1 mini
+Lifeboxes::Led leds[] = { 12, 14, 27 }; // ESP-32
+//Lifeboxes::Led leds[] = { 12, 13, 15 }; // Wemos D1 mini
 Lifeboxes::Net net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
 
