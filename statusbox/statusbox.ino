@@ -1,5 +1,6 @@
 // Libs
 #include "RBD_Timer.h"
+#include "RBD_Button.h"
 #include "Adafruit_SSD1306.h"
 #include "Net.h"
 #include "Api.h"
@@ -7,17 +8,23 @@
 // Configuration
 //const int SLEEPING_INTERVAL = 1800000; // 30 minutes
 const int SLEEPING_INTERVAL = 60000; // 60 seconds
-const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(3) + 80; // http://arduinojson.org/assistant/
+const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(1) + 80; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/status";
-//const String API_ENDPOINT = "http://6971e5fa.ngrok.io/status";
+//const String API_ENDPOINT = "http://26a393ed.ngrok.io/status";
+const int NUM_OF_SCREENS = 3;
 
 
 // Variables
 RBD::Timer updateTimer;
+RBD::Button leftButton(0);
+RBD::Button rightButton(2);
 #define OLED_RESET 0  // GPIO0
 Adafruit_SSD1306 lcd(OLED_RESET);
 Lifeboxes::Net net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
+
+int currentScreenIndex = 0;
+String screens[NUM_OF_SCREENS];
 
 
 // Main
@@ -37,6 +44,13 @@ void setup() {
 }
 
 void loop() {
+  if (leftButton.onPressed()) {
+    previousScreen();
+  }
+  if (rightButton.onPressed()) {
+    nextScreen();
+  }
+  
   if (updateTimer.onRestart()) {
     updateState();
   }
@@ -45,13 +59,46 @@ void loop() {
 // Private
 void updateState() {
   syncWithApi();
+  showCurrentScreen();
 }
 
 void syncWithApi() {
   JsonObject& json = api.fetchJson();
-
-  lcdMessage(json["message"]);
+  JsonArray&data = json["screens"];
+  int dataSize = data.size(); 
+  
+  for (int i = 0; i < dataSize; i++) {
+    String screen = data[i];
+    screens[i] = screen;
+  }
 }
+
+void previousScreen() {
+  currentScreenIndex--;
+
+  if (currentScreenIndex < 0) {
+    currentScreenIndex = NUM_OF_SCREENS -1;
+  }
+
+  showCurrentScreen();
+}
+
+void nextScreen() {
+  currentScreenIndex++;
+
+  if (currentScreenIndex >= NUM_OF_SCREENS) {
+    currentScreenIndex = 0;
+  }
+
+  showCurrentScreen();
+}
+
+void showCurrentScreen() {
+  String currentScreen = screens[currentScreenIndex];
+  
+  lcdMessage(currentScreen);
+}
+
 
 void lcdMessage(String message) {
   lcd.setCursor(0, 0);
