@@ -8,7 +8,7 @@
 // Configuration
 //const int SLEEPING_INTERVAL = 1800000; // 30 minutes
 const int SLEEPING_INTERVAL = 60000; // 60 seconds
-const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(1) + 80; // http://arduinojson.org/assistant/
+const size_t JSON_BUFFER = JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(1) + 130; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/status";
 //const String API_ENDPOINT = "http://8afe6a43.ngrok.io/status";
 const int NUM_OF_SCREENS = 3;
