@@ -14,7 +14,7 @@ namespace Lifeboxes  {
   class Net {
     public:
       Net();
-      int wifiStatus;
+      uint8_t wifiStatus;
       bool connect(int tries = 10);
       void disconnect();
   };

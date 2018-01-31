@@ -10,7 +10,7 @@
 const int SLEEPING_INTERVAL = 60000; // 60 seconds
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(1) + 80; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/status";
-//const String API_ENDPOINT = "http://26a393ed.ngrok.io/status";
+//const String API_ENDPOINT = "http://8afe6a43.ngrok.io/status";
 const int NUM_OF_SCREENS = 3;
 
 
@@ -39,7 +39,8 @@ void setup() {
     updateTimer.restart();
   }
   else {
-    lcdMessage("Error: " + net.wifiStatus);
+    updateTimer.stop();
+    showError();
   }
 }
 
@@ -95,16 +96,24 @@ void nextScreen() {
 
 void showCurrentScreen() {
   String currentScreen = screens[currentScreenIndex];
-  
-  lcdMessage(currentScreen);
-}
 
+  if (currentScreen) {
+    lcdMessage(currentScreen);
+  }
+  else {
+    showError();
+  }
+}
 
 void lcdMessage(String message) {
   lcd.setCursor(0, 0);
   lcd.clearDisplay();
   lcd.setTextSize(1);
   lcd.setTextColor(WHITE);
-  lcd.println(message);
+  lcd.print(message);
   lcd.display();
+}
+
+void showError() {
+  lcdMessage("Error: " + String(net.wifiStatus));
 }
