@@ -7,9 +7,9 @@
 // Configuration
 //const int SLEEPING_INTERVAL = 1800000; // 30 minutes
 const int SLEEPING_INTERVAL = 60000; // 60 seconds
-const size_t JSON_BUFFER = JSON_OBJECT_SIZE(1) + 50; // http://arduinojson.org/assistant/
-//const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/weather";
-const String API_ENDPOINT = "http://6971e5fa.ngrok.io/status";
+const size_t JSON_BUFFER = JSON_ARRAY_SIZE(2) + JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(3) + 80; // http://arduinojson.org/assistant/
+const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/status";
+//const String API_ENDPOINT = "http://6971e5fa.ngrok.io/status";
 
 
 // Variables
@@ -25,9 +25,15 @@ void setup() {
   Serial.begin(115200);
   lcd.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
   lcdMessage("Connecting");
-  updateTimer.setTimeout(SLEEPING_INTERVAL);
-  updateTimer.restart();
-  updateState();
+
+  if (net.connect()) {
+    updateState();
+    updateTimer.setTimeout(SLEEPING_INTERVAL);
+    updateTimer.restart();
+  }
+  else {
+    lcdMessage("Error: " + net.wifiStatus);
+  }
 }
 
 void loop() {
@@ -38,13 +44,7 @@ void loop() {
 
 // Private
 void updateState() {
-  if (net.connect()) {
-    syncWithApi();
-    net.disconnect();
-  }
-  else {
-    lcdMessage("Error: " + net.wifiStatus);
-  }
+  syncWithApi();
 }
 
 void syncWithApi() {
