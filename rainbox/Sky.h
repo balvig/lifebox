@@ -12,7 +12,11 @@ namespace Lifeboxes  {
       Sky(int initX);
       int x;
       void setState(int state);
-      Raindrop raindrops[2];
+      Raindrop raindrops[4];
+    private:
+      void stopRain();
+      void startLightRain();
+      void startHeavyRain();
   };
 }
 #endif
