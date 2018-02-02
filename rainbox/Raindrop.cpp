@@ -1,10 +1,7 @@
 #include "Raindrop.h"
 
 namespace Lifeboxes {
-
-  const int ROWS = 8;
-  
-  Raindrop::Raindrop(int initX)
+  Raindrop::Raindrop(uint8_t initX)
   : _updateTimer() {
     x = initX;
   }
@@ -29,4 +26,3 @@ namespace Lifeboxes {
     }
   }
 }
-

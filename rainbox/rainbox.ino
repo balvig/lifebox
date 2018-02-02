@@ -93,8 +93,10 @@ void animate() {
 
   for (auto &sky : skies) {
     for (auto &raindrop : sky.raindrops) {
-      raindrop.update();
-      matrix.drawPixel(raindrop.x, raindrop.y, raindrop.active);
+      if (raindrop.active) {
+        raindrop.update();
+        matrix.drawPixel(raindrop.x, raindrop.y, 1);
+      }
     }
   }
 

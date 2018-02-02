@@ -10,7 +10,6 @@ namespace Lifeboxes  {
   class Sky {
     public:
       Sky(int initX);
-      int x;
       void setState(int state);
       Raindrop raindrops[4];
     private:
