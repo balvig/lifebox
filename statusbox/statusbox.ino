@@ -6,7 +6,8 @@
 #include "Api.h"
 
 // Configuration
-const int SLEEPING_INTERVAL = 60000; // 60 seconds
+const int REFRESH_INTERVAL = 60000; // 60 seconds
+const int INACTIVITY_INTERVAL = 20000; // 20 seconds
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(1) + 130; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/status";
 //const String API_ENDPOINT = "http://8afe6a43.ngrok.io/status";
@@ -15,6 +16,7 @@ const int NUM_OF_SCREENS = 3;
 
 // Variables
 RBD::Timer updateTimer;
+RBD::Timer autoSleepTimer;
 RBD::Button leftButton(0);
 RBD::Button rightButton(2);
 Adafruit_SSD1306 lcd;
@@ -32,8 +34,10 @@ void setup() {
 
   if (net.connect()) {
     updateState();
-    updateTimer.setTimeout(SLEEPING_INTERVAL);
+    updateTimer.setTimeout(REFRESH_INTERVAL);
     updateTimer.restart();
+    autoSleepTimer.setTimeout(INACTIVITY_INTERVAL);
+    autoSleepTimer.restart();
   }
   else {
     updateTimer.stop();
@@ -44,9 +48,15 @@ void setup() {
 void loop() {
   if (leftButton.onPressed()) {
     previousScreen();
+    autoSleepTimer.restart();
   }
   if (rightButton.onPressed()) {
     nextScreen();
+    autoSleepTimer.restart();
+  }
+
+  if (autoSleepTimer.onExpired()) {
+    goToSleep();
   }
   
   if (updateTimer.onRestart()) {
@@ -114,4 +124,9 @@ void lcdMessage(String message) {
 
 void showError() {
   lcdMessage("Error\nWifi: " + String(net.wifiStatus));
+}
+
+void goToSleep() {
+  lcd.ssd1306_command(SSD1306_DISPLAYOFF);
+  ESP.deepSleep(0);
 }
