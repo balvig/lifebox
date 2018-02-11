@@ -7,11 +7,11 @@
 
 // Configuration
 const int REFRESH_INTERVAL = 60000; // 60 seconds
-const int INACTIVITY_INTERVAL = 20000; // 20 seconds
+const int INACTIVITY_INTERVAL = 30000; // 30 seconds
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(3) + JSON_OBJECT_SIZE(1) + 130; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/status";
-//const String API_ENDPOINT = "http://8afe6a43.ngrok.io/status";
-const int NUM_OF_SCREENS = 3;
+//const String API_ENDPOINT = "http://11d61090.ngrok.io/status";
+const int NUM_OF_SCREENS = 4;
 
 // Variables
 RBD::Timer updateTimer;
