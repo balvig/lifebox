@@ -13,7 +13,6 @@ const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/status";
 //const String API_ENDPOINT = "http://8afe6a43.ngrok.io/status";
 const int NUM_OF_SCREENS = 3;
 
-
 // Variables
 RBD::Timer updateTimer;
 RBD::Timer autoSleepTimer;
@@ -25,7 +24,6 @@ Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
 int currentScreenIndex = 0;
 String screens[NUM_OF_SCREENS];
 
-
 // Main
 void setup() {
   Serial.begin(115200);
@@ -36,13 +34,13 @@ void setup() {
     updateState();
     updateTimer.setTimeout(REFRESH_INTERVAL);
     updateTimer.restart();
-    autoSleepTimer.setTimeout(INACTIVITY_INTERVAL);
-    autoSleepTimer.restart();
   }
   else {
     updateTimer.stop();
     showError();
   }
+  autoSleepTimer.setTimeout(INACTIVITY_INTERVAL);
+  autoSleepTimer.restart();
 }
 
 void loop() {
