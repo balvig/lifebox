@@ -21,7 +21,6 @@ Servo hand;
 // Main
 void setup() {
   Serial.begin(115200);
-  net.connect(); // For some reason Wemos D1 won't reconnect after disconnect so keeping connected
 }
 
 void loop() {
@@ -30,6 +29,7 @@ void loop() {
 }
 
 void syncWithApi() {
+  net.connect(); // For some reason Wemos D1 won't reconnect after disconnect so keeping connected
   JsonObject& root = api.fetchJson();
   int degrees = root["degrees"] | INIT_HAND_POSITION;
   hand.attach(HAND_PIN);
