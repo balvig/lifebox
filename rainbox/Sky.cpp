@@ -8,28 +8,27 @@ namespace Lifeboxes {
   void Sky::setState(int state) {
     switch (state) {
       case 1:
-        startLightRain();
+        _setLightRain();
         break;
       case 2:
-        startHeavyRain();
+        _setHeavyRain();
         break;
       default:
-        stopRain();
+        _stopRain();
         break;
     }
   }
 
   // private
-
-  void Sky::stopRain() {
+  void Sky::_stopRain() {
     for (auto &raindrop : raindrops) {
       raindrop.active = false;
     }
   }
 
-  void Sky::startLightRain() {
+  void Sky::_setLightRain() {
     for (auto &raindrop : raindrops) {
-      raindrop.setFallingSpeed(Raindrop::SLOW);
+      raindrop.intensity = Raindrop::SLOW;
     }
 
     raindrops[0].active = true;
@@ -38,9 +37,9 @@ namespace Lifeboxes {
     raindrops[3].active = false;
   }
 
-  void Sky::startHeavyRain() {
+  void Sky::_setHeavyRain() {
     for (auto &raindrop : raindrops) {
-      raindrop.setFallingSpeed(Raindrop::FAST);
+      raindrop.intensity = Raindrop::FAST;
     }
 
     raindrops[0].active = true;

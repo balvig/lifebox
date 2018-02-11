@@ -4,25 +4,27 @@ namespace Lifeboxes {
   Raindrop::Raindrop(uint8_t initX)
   : _updateTimer() {
     x = initX;
+    restart();
   }
   
   void Raindrop::update() {
     if (_updateTimer.onRestart()) {
-      _updateY();
+      _updatePosition();
     }
   }
 
-  void Raindrop::setFallingSpeed(int multiplier) {
-    int fallingSpeed = random(100, 300) * multiplier;
-    _updateTimer.setTimeout(fallingSpeed);
+  void Raindrop::restart() {
+    rows = MATRIX_ROWS + random(0, WAITING_ROWS_MAX);
+    int fallingInterval = random(FALLING_INTERVAL_MIN, FALLING_INTERVAL_MAX) * intensity;
+    _updateTimer.setTimeout(fallingInterval);
   }
 
   // Private
-
-  void Raindrop::_updateY() {
+  void Raindrop::_updatePosition() {
     y++;
-    if (y >= ROWS) {
+    if (y >= rows) {
       y = 0;
+      restart();
     }
   }
 }

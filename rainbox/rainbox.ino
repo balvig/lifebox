@@ -9,7 +9,7 @@
 const int UPDATE_INTERVAL = 1800000; // 30 minutes
 const size_t JSON_BUFFER = JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/assistant/
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/rain";
-//const String API_ENDPOINT = "http://a3a58d21.ngrok.io/rain";
+//const String API_ENDPOINT = "http://11d61090.ngrok.io/rain";
 
 // Images
 static const uint8_t PROGMEM
@@ -23,13 +23,13 @@ static const uint8_t PROGMEM
     B00100000,
     B00000000
   },
-  upBmp[] = { 
+  downBmp[] = { 
     B00000000,
     B00011000,
-    B00111100,
+    B00011000,
+    B00011000,
     B01111110,
-    B00011000,
-    B00011000,
+    B00111100,
     B00011000,
     B00000000
   };
@@ -94,8 +94,8 @@ void animate() {
   for (auto &sky : skies) {
     for (auto &raindrop : sky.raindrops) {
       if (raindrop.active) {
-        raindrop.update();
         matrix.drawPixel(raindrop.x, raindrop.y, 1);
+        raindrop.update();
       }
     }
   }
@@ -105,7 +105,7 @@ void animate() {
 
 void showUpdating() {
   matrix.clear();
-  matrix.drawBitmap(0, 0, upBmp, 8, 8, LED_ON);
+  matrix.drawBitmap(0, 0, downBmp, 8, 8, LED_ON);
   matrix.writeDisplay();
 }
 

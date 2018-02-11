@@ -13,9 +13,9 @@ namespace Lifeboxes  {
       void setState(int state);
       Raindrop raindrops[4];
     private:
-      void stopRain();
-      void startLightRain();
-      void startHeavyRain();
+      void _stopRain();
+      void _setLightRain();
+      void _setHeavyRain();
   };
 }
 #endif
