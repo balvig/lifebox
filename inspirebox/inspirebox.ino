@@ -18,7 +18,7 @@ GxIO_Class io(SPI, SS, 0, 2); // arbitrary selection of D3(=0), D4(=2), selected
 GxEPD_Class display(io); // default selection of D4(=2), D2(=4)
 Lifeboxes::Net net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
-Lifeboxes::Sleep sleep(4);
+Lifeboxes::Sleep sleep(12);
 
 // Fonts
 #include <Fonts/FreeSans9pt7b.h>
