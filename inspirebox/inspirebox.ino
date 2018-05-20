@@ -7,7 +7,7 @@
 
 // Libs
 #include "Api.h"
-#include "Net.h"
+#include "ConfigurableNet.h"
 #include "Sleep.h"
 
 // API config
@@ -17,7 +17,7 @@ const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/inspire";
 // Variables
 GxIO_Class io(SPI, SS, 0, 2); // arbitrary selection of D3(=0), D4(=2), selected for default of GxEPD_Class
 GxEPD_Class display(io); // default selection of D4(=2), D2(=4)
-Lifeboxes::Net net;
+Lifeboxes::ConfigurableNet net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
 Lifeboxes::Sleep sleep(12);
 
@@ -28,14 +28,9 @@ const GFXfont* LARGE_FONT = &Bookerly_Regular8pt7b;
 void setup() {
   if(sleep.isTimeToWakeUp()) {
     initDisplay();
-    
-    if(net.connect()) {
-      loadScreen();
-      net.disconnect();
-    }
-    else {
-      showStatus("Wifi Error");
-    }
+    net.setErrorCallback(wifiError);
+    net.connect();
+    loadScreen();
   }
   
   sleep.goToSleep();
@@ -49,14 +44,6 @@ void initDisplay() {
   display.setRotation(1);
   display.setTextColor(GxEPD_BLACK);
   delay(1000);
-}
-
-void showStatus(const String message) {
-  display.fillScreen(GxEPD_WHITE);
-  display.setCursor(0, 0);
-  display.setFont();
-  display.println(message);
-  display.update();
 }
 
 void loadScreen() {
@@ -78,5 +65,18 @@ void loadScreen() {
   display.println(date);
 
   // Refresh
+  display.update();
+}
+
+void wifiError(WiFiManager *myWiFiManager) {
+  const String message = "Wifi connection error. To configure: \n\n- Access \"" + myWiFiManager->getConfigPortalSSID() + "\" wifi hotspot. \n- Browse to 192.168.4.1";
+  showStatus(message);
+}
+
+void showStatus(const String message) {
+  display.fillScreen(GxEPD_WHITE);
+  display.setCursor(0, 0);
+  display.setFont();
+  display.println(message);
   display.update();
 }
