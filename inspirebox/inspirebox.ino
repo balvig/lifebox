@@ -50,22 +50,31 @@ void loadScreen() {
   JsonObject& root = api.fetchJson();
   const String text = root["text"];
   const String date = root["date"];
+  const uint8_t top = 10;
+  const uint8_t bottom = 117;
 
   // Clear screen
   display.fillScreen(GxEPD_WHITE);
 
   // Main text
-  display.setCursor(0, 10);
+  display.setCursor(0, top);
   display.setFont(LARGE_FONT);
   display.println(text);
 
   // Date
   display.setFont();
-  display.setCursor(232, 117);
+  display.setCursor(232, bottom);
   display.println(date);
+
+  // Battery
+  display.setCursor(0, bottom);
+  display.println("Battery: " + analogRead(A0));
 
   // Refresh
   display.update();
+
+  // Give slow displays a chance to finish
+  delay(3000);
 }
 
 void wifiError(WiFiManager *myWiFiManager) {
