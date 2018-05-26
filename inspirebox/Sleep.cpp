@@ -1,14 +1,11 @@
 #include "Sleep.h"
 
 namespace Lifeboxes {
-
   const uint32_t RTC_SLEEP_COUNT_REGISTER = 65;
-  const double SECONDS = 10 * micros();
-  const double HOURS = 60 * 60 * SECONDS;
-  const double SLEEPING_INTERVAL = 1 * HOURS;
   
-  Sleep::Sleep(uint32_t hoursToSleep) {
+  Sleep::Sleep(uint32_t hoursToSleep, uint32_t sleepingInterval) {
     _hoursToSleep = hoursToSleep;
+    _sleepingInterval = sleepingInterval;
   }
 
   bool Sleep::isTimeToWakeUp() {
@@ -23,7 +20,7 @@ namespace Lifeboxes {
 
   void Sleep::goToSleep() {
     _writeHoursSlept();
-    ESP.deepSleep(SLEEPING_INTERVAL); 
+    ESP.deepSleep(_sleepingInterval); 
   }
 
   // Private
