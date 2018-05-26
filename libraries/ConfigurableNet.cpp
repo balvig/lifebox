@@ -5,6 +5,7 @@ namespace Lifeboxes {
   ConfigurableNet::ConfigurableNet() {}
 
   void ConfigurableNet::connect() {
+    _wifiManager.setConfigPortalTimeout(180);
     _wifiManager.autoConnect("Lifebox");    
   }
 
