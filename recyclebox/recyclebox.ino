@@ -1,45 +1,50 @@
 // Libs
-#include "Net.h"
 #include "Api.h"
+#include "ConfigurableNet.h"
+#include "Sleep.h"
 #include "Servo.h"
 
 // Configuration
-const int MS = 1000000;
-const int SLEEPING_INTERVAL = 60 * 60 * MS; // 60 minutes
-//const int SLEEPING_INTERVAL = 5 * MS; // 5 sec
 const size_t JSON_BUFFER = JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/assistant/
-const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/recycle";
-//const String API_ENDPOINT = "http://a0e839bc.ngrok.io/recycle";
+//const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/recycle";
+const String API_ENDPOINT = "http://61c38b52.ngrok.io";
 const int INIT_HAND_POSITION = 180;
 const int HAND_PIN = 2;
 
 // Variables
-Lifeboxes::Net net;
+Lifeboxes::ConfigurableNet net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
+Lifeboxes::Sleep sleep(1);
 Servo hand;
 
 
 // Main
 void setup() {
-  Serial.begin(115200);
-  syncWithApi();
-  goToSleep(); // D0-RST on Wemos, remove when uploading...
+  if(sleep.isTimeToWakeUp()) {
+    syncWithApi();
+  }
+
+  sleep.goToSleep();
 }
 
 void loop() {
 }
 
 void syncWithApi() {
-  net.connect(); // For some reason Wemos D1 won't reconnect after disconnect so keeping connected
+  net.setErrorCallback(wifiError);
+  net.connect();
   JsonObject& root = api.fetchJson();
   int degrees = root["degrees"] | INIT_HAND_POSITION;
-  Serial.println(degrees);
+  setHand(degrees);
+}
+
+void setHand(int degrees) {
   hand.attach(HAND_PIN);
   hand.write(degrees);
   delay(1000);
   hand.detach();
 }
 
-void goToSleep() {
-  ESP.deepSleep(SLEEPING_INTERVAL * 1000000);
+void wifiError(WiFiManager *myWiFiManager) {
+  setHand(INIT_HAND_POSITION);
 }
