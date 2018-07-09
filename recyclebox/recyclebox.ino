@@ -6,8 +6,7 @@
 
 // Configuration
 const size_t JSON_BUFFER = JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/assistant/
-//const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/recycle";
-const String API_ENDPOINT = "http://61c38b52.ngrok.io";
+const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/recycle";
 const int INIT_HAND_POSITION = 180;
 const int HAND_PIN = 2;
 
@@ -20,10 +19,13 @@ Servo hand;
 
 // Main
 void setup() {
+  Serial.begin(115200);
+  
   if(sleep.isTimeToWakeUp()) {
     syncWithApi();
   }
 
+  Serial.println("Sleeping.");
   sleep.goToSleep();
 }
 
@@ -39,12 +41,16 @@ void syncWithApi() {
 }
 
 void setHand(int degrees) {
+  Serial.print("Moving hand to: ");
+  Serial.println(degrees);
   hand.attach(HAND_PIN);
   hand.write(degrees);
-  delay(1000);
+  delay(2000);
   hand.detach();
 }
 
 void wifiError(WiFiManager *myWiFiManager) {
+  const String message = "Wifi connection error. To configure: \n\n- Access \"" + myWiFiManager->getConfigPortalSSID() + "\" wifi hotspot. \n- Browse to 192.168.4.1";
+  Serial.println(message);
   setHand(INIT_HAND_POSITION);
 }
