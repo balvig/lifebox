@@ -10,7 +10,7 @@ const size_t JSON_BUFFER = JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/a
 const String API_ENDPOINT = "http://lifeboxes.herokuapp.com/recycle";
 const int INIT_HAND_POSITION = 180;
 const int HAND_PIN = 2;
-const int SLEEP_CYCLES = 12;
+const int SLEEP_CYCLES = 6;
 
 // Variables
 Lifeboxes::ConfigurableNet net;
@@ -24,11 +24,8 @@ Servo hand;
 void setup() {
   Serial.begin(115200);
 
-  if(battery.low()) {
-    batteryError();
-  }
-  else if(sleep.isTimeToWakeUp()) {
-    syncWithApi();
+  if(sleep.isTimeToWakeUp()) {
+    run();
   }
 
   Serial.println("Sleeping.");
@@ -36,6 +33,15 @@ void setup() {
 }
 
 void loop() {
+}
+
+void run() {
+  if(battery.low()) {
+    batteryError();
+  }
+  else {
+    syncWithApi();
+  }
 }
 
 void syncWithApi() {
