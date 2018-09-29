@@ -25,24 +25,21 @@ Servo hand;
 void setup() {
   Serial.begin(115200);
 
-  if(sleep.isTimeToWakeUp()) {
+  if(battery.low()) {
+    batteryError();
+  }
+  else if(sleep.isTimeToWakeUp()) {
     run();
   }
 
   Serial.println("Sleeping.");
-  sleep.goToSleep();
 }
 
 void loop() {
 }
 
 void run() {
-  if(battery.low()) {
-    batteryError();
-  }
-  else {
-    syncWithApi();
-  }
+  syncWithApi();
 }
 
 void syncWithApi() {
@@ -51,6 +48,7 @@ void syncWithApi() {
   JsonObject& root = api.fetchJson();
   int degrees = root["degrees"] | INIT_HAND_POSITION;
   setHand(degrees);
+  sleep.goToSleep();
 }
 
 void setHand(int degrees) {
@@ -72,4 +70,5 @@ void batteryError() {
   Serial.print("Low battery: ");
   Serial.println(battery.currentLevel());
   setHand(INIT_HAND_POSITION);
+  sleep.goToSleep();
 }
