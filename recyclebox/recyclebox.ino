@@ -31,8 +31,6 @@ void setup() {
   else if(sleep.isTimeToWakeUp()) {
     run();
   }
-
-  Serial.println("Sleeping.");
 }
 
 void loop() {
@@ -48,7 +46,7 @@ void syncWithApi() {
   JsonObject& root = api.fetchJson();
   int degrees = root["degrees"] | INIT_HAND_POSITION;
   setHand(degrees);
-  sleep.goToSleep();
+  goToSleep();
 }
 
 void setHand(int degrees) {
@@ -70,5 +68,10 @@ void batteryError() {
   Serial.print("Low battery: ");
   Serial.println(battery.currentLevel());
   setHand(INIT_HAND_POSITION);
+  goToSleep();
+}
+
+void goToSleep() {
   sleep.goToSleep();
+  Serial.println("Sleeping.");
 }
