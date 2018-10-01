@@ -31,6 +31,8 @@ void setup() {
   if(sleep.isTimeToWakeUp()) {
     run();
   }
+
+  goToSleep();
 }
 
 void loop() {
@@ -40,7 +42,6 @@ void run() {
   connectToWifi();
   logBattery();
   syncWithApi();
-  goToSleep();
 }
 
 void connectToWifi() {
