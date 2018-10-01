@@ -7,6 +7,13 @@ namespace Lifeboxes {
     _http.setTimeout(10000);
   }
 
+  void Api::post(const String body) {
+    _http.begin(_endpoint);
+    _http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+    _http.POST(body);
+    _http.end();
+  }
+
   JsonObject& Api::fetchJson() {
     String results = _fetchRaw();
     DynamicJsonBuffer jsonBuffer(_bufferSize);

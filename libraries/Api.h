@@ -13,7 +13,8 @@
 namespace Lifeboxes  {
   class Api {
     public:
-      Api(String endpoint, const size_t bufferSize);
+      Api(String endpoint, const size_t bufferSize = 0);
+      void post(const String body);
       JsonObject& fetchJson();
       enum {PENDING, SUCCESS, FAILED} status;
     private:
