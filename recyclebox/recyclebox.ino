@@ -9,7 +9,8 @@
 const size_t JSON_BUFFER = JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/assistant/
 const String API_HOST = "http://lifeboxes.herokuapp.com";
 const String API_ENDPOINT = API_HOST + "/recycle";
-const String LOG_API_ENDPOINT = API_HOST + "/logs";
+const String LOG_API_ENDPOINT = "http://api.thingspeak.com/update";
+const String LOG_API_KEY = "92YAC5EVJF5ES69W";
 const int INIT_HAND_POSITION = 180;
 const int HAND_PIN = 4;
 const int SLEEP_CYCLES = 6;
@@ -41,7 +42,7 @@ void loop() {
 void run() {
   connectToWifi();
   logBattery();
-  syncWithApi();
+  //syncWithApi();
 }
 
 void connectToWifi() {
@@ -71,7 +72,7 @@ void wifiError(WiFiManager *myWiFiManager) {
 }
 
 void logBattery() {
-  const String body = "battery="+ String(battery.currentLevel());
+  const String body = "field1="+ String(battery.currentLevel()) + "&api_key=" + LOG_API_KEY;
   logApi.post(body);
 }
 

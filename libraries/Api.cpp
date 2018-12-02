@@ -39,4 +39,3 @@ namespace Lifeboxes {
     return result;
   }
 }
-
