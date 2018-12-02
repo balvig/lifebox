@@ -13,7 +13,7 @@ const String LOG_API_ENDPOINT = "http://api.thingspeak.com/update";
 const String LOG_API_KEY = "92YAC5EVJF5ES69W";
 const int INIT_HAND_POSITION = 180;
 const int HAND_PIN = 4;
-const int SLEEP_CYCLES = 6;
+const int SLEEP_CYCLES = 2;
 const int LOW_BATTERY_LEVEL = 800;
 
 // Variables
