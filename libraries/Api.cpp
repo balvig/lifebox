@@ -14,15 +14,16 @@ namespace Lifeboxes {
     _http.end();
   }
 
-  JsonObject& Api::fetchJson() {
-    String results = _fetchRaw();
+  JsonObject& Api::fetchJson(const String query) {
+    const String url = _endpoint + query;
+    const String results = _fetchRaw(url);
     DynamicJsonBuffer jsonBuffer(_bufferSize);
     return jsonBuffer.parseObject(results);
   }
 
   // Private
-  String Api::_fetchRaw() {
-    _http.begin(_endpoint);
+  String Api::_fetchRaw(const String url) {
+    _http.begin(url);
 
     String result = "";
     int httpCode = _http.GET();

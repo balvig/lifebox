@@ -15,13 +15,13 @@ namespace Lifeboxes  {
     public:
       Api(String endpoint, const size_t bufferSize = 0);
       void post(const String body);
-      JsonObject& fetchJson();
+      JsonObject& fetchJson(const String query = "");
       enum {PENDING, SUCCESS, FAILED} status;
     private:
       HTTPClient _http;
       String _endpoint;
       size_t _bufferSize;
-      String _fetchRaw();
+      String _fetchRaw(const String url);
   };
 }
 #endif
