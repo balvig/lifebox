@@ -3,7 +3,7 @@
 namespace Lifeboxes {
   const uint32_t RTC_SLEEP_COUNT_REGISTER = 65;
   
-  Sleep::Sleep(uint32_t cyclesToSleep, uint32_t sleepingInterval) {
+  Sleep::Sleep(uint32_t cyclesToSleep, uint64_t sleepingInterval) {
     _cyclesToSleep = cyclesToSleep;
     _sleepingInterval = sleepingInterval;
   }
