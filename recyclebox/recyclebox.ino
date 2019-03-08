@@ -13,6 +13,7 @@ const int INIT_HAND_POSITION = 180;
 const int HAND_PIN = 4;
 const int SLEEP_CYCLES = 2;
 const int LOW_BATTERY_LEVEL = 800;
+const int DETACH_COMPENSATION = 25; // Servo twitches a bit when detached
 
 // Variables
 Lifeboxes::ConfigurableNet net;
@@ -54,11 +55,13 @@ void syncWithApi() {
 }
 
 void setHand(int degrees) {
+  degrees = degrees + DETACH_COMPENSATION;
   Serial.print("Moving hand to: ");
   Serial.println(degrees);
   hand.attach(HAND_PIN);
   hand.write(degrees);
-  delay(2000);
+  Serial.println("Waiting to avoid interrupting hand");
+  delay(1000);
   hand.detach();
 }
 
@@ -69,6 +72,6 @@ void wifiError(WiFiManager *myWiFiManager) {
 }
 
 void goToSleep() {
-  sleep.goToSleep();
   Serial.println("Sleeping.");
+  sleep.goToSleep();
 }
