@@ -7,8 +7,6 @@ extern "C" {
 #include "Arduino.h"
 
 namespace Lifeboxes  {
-  const double SECONDS = 10 * micros();
-  const double HOURS = 60 * 60 * SECONDS;
   const uint64_t DEFAULT_SLEEPING_INTERVAL = ESP.deepSleepMax();
 
   class Sleep {
