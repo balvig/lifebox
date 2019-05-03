@@ -7,11 +7,11 @@ extern "C" {
 #include "Arduino.h"
 
 namespace Lifeboxes  {
-  const uint64_t DEFAULT_SLEEPING_INTERVAL = ESP.deepSleepMax();
+  const uint64_t MAX_SLEEPING_INTERVAL = ESP.deepSleepMax();
 
   class Sleep {
     public:
-      Sleep(uint32_t cyclesToSleep, uint64_t sleepingInterval = DEFAULT_SLEEPING_INTERVAL);
+      Sleep(uint32_t cyclesToSleep, uint64_t sleepingInterval = MAX_SLEEPING_INTERVAL);
       bool isTimeToWakeUp();
       void goToSleep();
     private:

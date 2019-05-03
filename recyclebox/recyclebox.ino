@@ -16,13 +16,15 @@ const int SLEEP_CYCLES = 2;
 const int LOW_BATTERY_LEVEL = 800;
 
 // Dev configuration
-const double SECONDS = 10 * micros();
-const double DEBUG_SLEEPING_INTERVAL = 5 * SECONDS;
+const uint64_t SECONDS = 10 * micros();
+const uint64_t HOURS = 60 * 60 * SECONDS;
+const uint64_t SLEEPING_INTERVAL = 2 * HOURS;
+const uint64_t DEBUG_SLEEPING_INTERVAL = 5 * SECONDS;
 
 // Variables
 Lifeboxes::ConfigurableNet net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
-Lifeboxes::Sleep sleep(SLEEP_CYCLES);
+Lifeboxes::Sleep sleep(SLEEP_CYCLES, SLEEPING_INTERVAL);
 //Lifeboxes::Sleep sleep(SLEEP_CYCLES, DEBUG_SLEEPING_INTERVAL);
 Lifeboxes::Battery battery(LOW_BATTERY_LEVEL);
 Servo hand;
