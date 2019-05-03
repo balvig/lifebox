@@ -41,6 +41,9 @@ namespace Lifeboxes {
       _readCyclesRemaining();
       _cyclesRemaining--;
     }
+
+    Serial.print("Sleep cycles remaining: ");
+    Serial.println(_cyclesRemaining);
   }
 
   void Sleep::_resetCyclesRemaining() {
