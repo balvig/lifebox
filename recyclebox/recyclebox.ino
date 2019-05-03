@@ -12,20 +12,20 @@ const String API_ENDPOINT = API_HOST + "/recycle";
 const int INIT_HAND_POSITION = 180;
 const int HAND_PIN = 13;
 const int SERVO_POWER_PIN = 14;
-const int SLEEP_CYCLES = 2;
+const int DEFAULT_SLEEP_CYCLES = 1;
 const int LOW_BATTERY_LEVEL = 800;
 
 // Dev configuration
 const uint64_t SECONDS = 10 * micros();
 const uint64_t HOURS = 60 * 60 * SECONDS;
-const uint64_t DEFAULT_SLEEPING_INTERVAL = 2 * HOURS;
+const uint64_t SLEEPING_INTERVAL = 1 * HOURS;
 const uint64_t DEBUG_SLEEPING_INTERVAL = 5 * SECONDS;
 
 // Variables
 Lifeboxes::ConfigurableNet net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
-//Lifeboxes::Sleep sleep(SLEEP_CYCLES, SLEEPING_INTERVAL);
-Lifeboxes::Sleep sleep(SLEEP_CYCLES, DEBUG_SLEEPING_INTERVAL);
+Lifeboxes::Sleep sleep(DEFAULT_SLEEP_CYCLES, SLEEPING_INTERVAL);
+//Lifeboxes::Sleep sleep(DEFAULT_SLEEP_CYCLES, DEBUG_SLEEPING_INTERVAL);
 Lifeboxes::Battery battery(LOW_BATTERY_LEVEL);
 Servo hand;
 
@@ -54,8 +54,10 @@ void syncWithApi() {
   connectToWifi();
   const String logValue = String(battery.currentLevel());
   JsonObject& root = api.fetchJson("?log_value=" + logValue);
-  int degrees = root["degrees"] | INIT_HAND_POSITION;
+  const int degrees = root["degrees"] | INIT_HAND_POSITION;
   setHand(degrees);
+  const int cycles = root["cycles"] | DEFAULT_SLEEP_CYCLES;
+  sleep.resetCyclesRemaining(cycles);
 }
 
 void connectToWifi() {
