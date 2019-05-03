@@ -18,7 +18,7 @@ const int LOW_BATTERY_LEVEL = 800;
 // Dev configuration
 const uint64_t SECONDS = 10 * micros();
 const uint64_t HOURS = 60 * 60 * SECONDS;
-const uint64_t SLEEPING_INTERVAL = 2 * HOURS;
+const uint64_t DEFAULT_SLEEPING_INTERVAL = 2 * HOURS;
 const uint64_t DEBUG_SLEEPING_INTERVAL = 5 * SECONDS;
 
 // Variables

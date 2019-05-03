@@ -5,7 +5,7 @@ namespace Lifeboxes {
   
   Sleep::Sleep(uint32_t cyclesToSleep, uint64_t sleepingInterval) {
     Serial.println("Sleep interval" + sleepingInterval);
-    _cyclesToSleep = cyclesToSleep;
+    _defaultCyclesToSleep = cyclesToSleep;
     _sleepingInterval = sleepingInterval;
   }
 
@@ -13,13 +13,16 @@ namespace Lifeboxes {
     _updateCyclesRemaining();
 
     if(_cyclesRemaining <= 0) {
-      _resetCyclesRemaining();
+      resetCyclesRemaining(_defaultCyclesToSleep);
       return true;
     }
     else {
       return false;
     }
+  }
 
+  void Sleep::resetCyclesRemaining(uint32_t newValue) {
+    _cyclesRemaining = newValue;
   }
 
   void Sleep::goToSleep() {
@@ -35,7 +38,7 @@ namespace Lifeboxes {
   
   void Sleep::_updateCyclesRemaining() {
     if(_wasResetFromSleepUp()) {
-      _resetCyclesRemaining();
+      resetCyclesRemaining(_defaultCyclesToSleep);
     }
     else {
       _readCyclesRemaining();
@@ -44,10 +47,6 @@ namespace Lifeboxes {
 
     Serial.print("Sleep cycles remaining: ");
     Serial.println(_cyclesRemaining);
-  }
-
-  void Sleep::_resetCyclesRemaining() {
-    _cyclesRemaining = _cyclesToSleep;
   }
 
   void Sleep::_readCyclesRemaining() {
