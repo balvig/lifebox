@@ -24,8 +24,8 @@ const uint64_t DEBUG_SLEEPING_INTERVAL = 5 * SECONDS;
 // Variables
 Lifeboxes::ConfigurableNet net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
-Lifeboxes::Sleep sleep(SLEEP_CYCLES, SLEEPING_INTERVAL);
-//Lifeboxes::Sleep sleep(SLEEP_CYCLES, DEBUG_SLEEPING_INTERVAL);
+//Lifeboxes::Sleep sleep(SLEEP_CYCLES, SLEEPING_INTERVAL);
+Lifeboxes::Sleep sleep(SLEEP_CYCLES, DEBUG_SLEEPING_INTERVAL);
 Lifeboxes::Battery battery(LOW_BATTERY_LEVEL);
 Servo hand;
 

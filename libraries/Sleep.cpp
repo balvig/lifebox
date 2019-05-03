@@ -10,17 +10,20 @@ namespace Lifeboxes {
   }
 
   bool Sleep::isTimeToWakeUp() {
-    _updateCyclesSlept();
+    _updateCyclesRemaining();
 
-    if(_cyclesSlept >= _cyclesToSleep) {
-      _cyclesSlept = 0;
+    if(_cyclesRemaining <= 0) {
+      _resetCyclesRemaining();
+      return true;
+    }
+    else {
+      return false;
     }
 
-    return _cyclesSlept == 0;
   }
 
   void Sleep::goToSleep() {
-    _writeCyclesSlept();
+    _writeCyclesRemaining();
     ESP.deepSleep(_sleepingInterval); 
   }
 
@@ -30,21 +33,25 @@ namespace Lifeboxes {
     return reason == 6;
   }
   
-  void Sleep::_updateCyclesSlept() {
+  void Sleep::_updateCyclesRemaining() {
     if(_wasResetFromSleepUp()) {
-      _cyclesSlept = 0;
+      _resetCyclesRemaining();
     }
     else {
-      _readCyclesSlept();
-      _cyclesSlept++;
+      _readCyclesRemaining();
+      _cyclesRemaining--;
     }
   }
 
-  void Sleep::_readCyclesSlept() {
-    system_rtc_mem_read(RTC_SLEEP_COUNT_REGISTER, &_cyclesSlept, sizeof(_cyclesSlept));
+  void Sleep::_resetCyclesRemaining() {
+    _cyclesRemaining = _cyclesToSleep;
   }
 
-  void Sleep::_writeCyclesSlept() {
-    system_rtc_mem_write(RTC_SLEEP_COUNT_REGISTER, &_cyclesSlept, sizeof(_cyclesSlept));
+  void Sleep::_readCyclesRemaining() {
+    system_rtc_mem_read(RTC_SLEEP_COUNT_REGISTER, &_cyclesRemaining, sizeof(_cyclesRemaining));
+  }
+
+  void Sleep::_writeCyclesRemaining() {
+    system_rtc_mem_write(RTC_SLEEP_COUNT_REGISTER, &_cyclesRemaining, sizeof(_cyclesRemaining));
   }
 }

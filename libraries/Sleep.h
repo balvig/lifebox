@@ -15,13 +15,14 @@ namespace Lifeboxes  {
       bool isTimeToWakeUp();
       void goToSleep();
     private:
-      uint32_t _cyclesSlept;
+      uint32_t _cyclesRemaining;
       uint32_t _cyclesToSleep;
       uint64_t _sleepingInterval;
       bool _wasResetFromSleepUp();
-      void _updateCyclesSlept();
-      void _readCyclesSlept();
-      void _writeCyclesSlept();
+      void _updateCyclesRemaining();
+      void _resetCyclesRemaining();
+      void _readCyclesRemaining();
+      void _writeCyclesRemaining();
   };
 }
 #endif
