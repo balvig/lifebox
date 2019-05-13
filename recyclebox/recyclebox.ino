@@ -9,6 +9,7 @@
 const size_t JSON_BUFFER = JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/assistant/
 const String API_HOST = "http://lifeboxes.herokuapp.com";
 const String API_ENDPOINT = API_HOST + "/recycle";
+const String LOG_API_KEY = "1I5V5U4297RGUKDQ";
 const int INIT_HAND_POSITION = 180;
 const int HAND_PIN = 13;
 const int SERVO_POWER_PIN = 14;
@@ -53,7 +54,7 @@ void run() {
 void syncWithApi() {
   connectToWifi();
   const String logValue = String(battery.currentLevel());
-  JsonObject& root = api.fetchJson("?log_value=" + logValue);
+  JsonObject& root = api.fetchJson("?log_value=" + logValue + "&log_key=" + LOG_API_KEY);
   const int degrees = root["degrees"] | INIT_HAND_POSITION;
   setHand(degrees);
   const int cycles = root["cycles"] | DEFAULT_SLEEP_CYCLES;
