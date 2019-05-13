@@ -15,8 +15,8 @@ namespace Lifeboxes  {
       bool isTimeToWakeUp();
       void resetCyclesRemaining(uint32_t newValue);
       void goToSleep();
+      uint32_t cyclesRemaining;
     private:
-      uint32_t _cyclesRemaining;
       uint32_t _defaultCyclesToSleep;
       uint64_t _sleepingInterval;
       bool _wasResetFromSleepUp();

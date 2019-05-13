@@ -6,7 +6,7 @@
 #include "Servo.h"
 
 // Configuration
-const size_t JSON_BUFFER = JSON_OBJECT_SIZE(1) + 20; // http://arduinojson.org/assistant/
+const size_t JSON_BUFFER = JSON_OBJECT_SIZE(2) + 30; // http://arduinojson.org/assistant/
 const String API_HOST = "http://lifeboxes.herokuapp.com";
 const String API_ENDPOINT = API_HOST + "/recycle";
 const String LOG_API_KEY = "1I5V5U4297RGUKDQ";
@@ -22,6 +22,13 @@ const uint64_t HOURS = 60 * 60 * SECONDS;
 const uint64_t SLEEPING_INTERVAL = 1 * HOURS;
 const uint64_t DEBUG_SLEEPING_INTERVAL = 5 * SECONDS;
 
+// Debug display
+#include "Adafruit_SSD1306.h"
+#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
 // Variables
 Lifeboxes::ConfigurableNet net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
@@ -30,10 +37,17 @@ Lifeboxes::Sleep sleep(DEFAULT_SLEEP_CYCLES, SLEEPING_INTERVAL);
 Lifeboxes::Battery battery(LOW_BATTERY_LEVEL);
 Servo hand;
 
-
 // Main
 void setup() {
   Serial.begin(115200);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.setCursor(0, 0);
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+
+  log((String)ESP.getResetReason().c_str() + " (" + ESP.getResetInfoPtr()->reason + ")");
+  
   pinMode(SERVO_POWER_PIN, OUTPUT);
   setServoPower(false);
 
@@ -48,55 +62,64 @@ void loop() {
 }
 
 void run() {
+  connectToWifi();
   syncWithApi();
 }
 
 void syncWithApi() {
-  connectToWifi();
+  log("Syncing with API");
   const String logValue = String(battery.currentLevel());
   JsonObject& root = api.fetchJson("?log_value=" + logValue + "&log_key=" + LOG_API_KEY);
   const int degrees = root["degrees"] | INIT_HAND_POSITION;
   setHand(degrees);
   const int cycles = root["cycles"] | DEFAULT_SLEEP_CYCLES;
+  log((String)"New cycles from API: " + cycles);
   sleep.resetCyclesRemaining(cycles);
 }
 
 void connectToWifi() {
+  log("Connecting to wifi");
   net.setErrorCallback(wifiError);
   net.connect();
 }
 
 void setHand(int degrees) {
   setServoPower(true);
-  Serial.print("Moving hand to: ");
-  Serial.println(degrees);
+  log((String)"Moving hand to: " + degrees);
   hand.attach(HAND_PIN);
   hand.write(degrees);
-  Serial.println("Waiting to avoid interrupting hand");
+  log("Waiting..."); // To avoid interrupting hand
   delay(1000);
   setServoPower(false);
-  Serial.println("Detaching");
+  log("Detaching");
   hand.detach();
 }
 
 void setServoPower(boolean powerOn) {
   if(powerOn) {
-    Serial.println("Powering up servo");
+    log("Servo on");
     digitalWrite(SERVO_POWER_PIN, HIGH);
   }
   else {
-    Serial.println("Powering down servo");
+    log("Servo off");
     digitalWrite(SERVO_POWER_PIN, LOW);
   }
 }
 
 void wifiError(WiFiManager *myWiFiManager) {
-  const String message = "Wifi connection error. To configure: \n\n- Access \"" + myWiFiManager->getConfigPortalSSID() + "\" wifi hotspot. \n- Browse to http://192.168.4.1";
-  Serial.println(message);
+  log("Wifi error");
+  log((String)"Access \"" + myWiFiManager->getConfigPortalSSID() + "\" wifi hotspot. Browse to http://192.168.4.1");
   setHand(INIT_HAND_POSITION);
 }
 
 void goToSleep() {
-  Serial.println("Sleeping.");
+  log((String)"Sleeping. Remain:" + sleep.cyclesRemaining);
   sleep.goToSleep();
+}
+
+
+void log(String message) {
+  Serial.println(message);
+  display.println(message);
+  display.display();
 }

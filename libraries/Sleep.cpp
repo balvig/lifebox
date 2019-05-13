@@ -4,7 +4,6 @@ namespace Lifeboxes {
   const uint32_t RTC_SLEEP_COUNT_REGISTER = 65;
   
   Sleep::Sleep(uint32_t cyclesToSleep, uint64_t sleepingInterval) {
-    Serial.println("Sleep interval" + sleepingInterval);
     _defaultCyclesToSleep = cyclesToSleep;
     _sleepingInterval = sleepingInterval;
   }
@@ -12,7 +11,7 @@ namespace Lifeboxes {
   bool Sleep::isTimeToWakeUp() {
     _updateCyclesRemaining();
 
-    if(_cyclesRemaining <= 0) {
+    if(cyclesRemaining <= 0) {
       resetCyclesRemaining(_defaultCyclesToSleep);
       return true;
     }
@@ -22,7 +21,7 @@ namespace Lifeboxes {
   }
 
   void Sleep::resetCyclesRemaining(uint32_t newValue) {
-    _cyclesRemaining = newValue;
+    cyclesRemaining = newValue;
   }
 
   void Sleep::goToSleep() {
@@ -42,18 +41,15 @@ namespace Lifeboxes {
     }
     else {
       _readCyclesRemaining();
-      _cyclesRemaining--;
+      cyclesRemaining--;
     }
-
-    Serial.print("Sleep cycles remaining: ");
-    Serial.println(_cyclesRemaining);
   }
 
   void Sleep::_readCyclesRemaining() {
-    system_rtc_mem_read(RTC_SLEEP_COUNT_REGISTER, &_cyclesRemaining, sizeof(_cyclesRemaining));
+    system_rtc_mem_read(RTC_SLEEP_COUNT_REGISTER, &cyclesRemaining, sizeof(cyclesRemaining));
   }
 
   void Sleep::_writeCyclesRemaining() {
-    system_rtc_mem_write(RTC_SLEEP_COUNT_REGISTER, &_cyclesRemaining, sizeof(_cyclesRemaining));
+    system_rtc_mem_write(RTC_SLEEP_COUNT_REGISTER, &cyclesRemaining, sizeof(cyclesRemaining));
   }
 }
