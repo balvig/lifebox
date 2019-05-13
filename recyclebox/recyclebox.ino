@@ -108,12 +108,14 @@ void setServoPower(boolean powerOn) {
 
 void wifiError(WiFiManager *myWiFiManager) {
   log("Wifi error");
-  log((String)"Access \"" + myWiFiManager->getConfigPortalSSID() + "\" wifi hotspot. Browse to http://192.168.4.1");
+  log((String)"Access \"" + myWiFiManager->getConfigPortalSSID() + "\" wifi hotspot");
+  log((String)"Browse to http://192.168.4.1");
   setHand(INIT_HAND_POSITION);
 }
 
 void goToSleep() {
   log((String)"Sleeping. Remain:" + sleep.cyclesRemaining);
+  turnOffDisplay();
   sleep.goToSleep();
 }
 
@@ -122,4 +124,9 @@ void log(String message) {
   Serial.println(message);
   display.println(message);
   display.display();
+}
+
+void turnOffDisplay() {
+  delay(5000);
+  display.ssd1306_command(SSD1306_DISPLAYOFF);
 }
