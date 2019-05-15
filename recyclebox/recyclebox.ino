@@ -34,15 +34,14 @@ Lifeboxes::ConfigurableNet net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
 Lifeboxes::Sleep sleep(DEFAULT_SLEEP_CYCLES, SLEEPING_INTERVAL);
 //Lifeboxes::Sleep sleep(DEFAULT_SLEEP_CYCLES, DEBUG_SLEEPING_INTERVAL);
-Lifeboxes::Battery battery(LOW_BATTERY_LEVEL);
+Lifeboxes::Battery battery;
 Servo hand;
 
 // Main
 void setup() {
   Serial.begin(115200);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.setCursor(0, 0);
-  display.clearDisplay();
+  clearScreen();
   display.setTextSize(1);
   display.setTextColor(WHITE);
 
@@ -73,7 +72,7 @@ void syncWithApi() {
   const int degrees = root["degrees"] | INIT_HAND_POSITION;
   setHand(degrees);
   const int cycles = root["cycles"] | DEFAULT_SLEEP_CYCLES;
-  log((String)"New cycles from API: " + cycles);
+  log((String)"New cycles: " + cycles);
   sleep.resetCyclesRemaining(cycles);
 }
 
@@ -119,11 +118,19 @@ void goToSleep() {
   sleep.goToSleep();
 }
 
-
 void log(String message) {
+  if(display.getCursorY() > SCREEN_HEIGHT) {
+    clearScreen();
+  }
+
   Serial.println(message);
   display.println(message);
   display.display();
+}
+
+void clearScreen() {
+  display.setCursor(0, 0);
+  display.clearDisplay();
 }
 
 void turnOffDisplay() {

@@ -6,11 +6,8 @@
 namespace Lifeboxes  {
   class Battery {
     public:
-      Battery(uint32_t lowBatteryLimit);
-      bool low();
+      Battery();
       uint32_t currentLevel();
-    private:
-      uint32_t _lowBatteryLimit;
   };
 }
 #endif
