@@ -22,13 +22,6 @@ const uint64_t HOURS = 60 * 60 * SECONDS;
 const uint64_t SLEEPING_INTERVAL = 1 * HOURS;
 const uint64_t DEBUG_SLEEPING_INTERVAL = 5 * SECONDS;
 
-// Debug display
-#include "Adafruit_SSD1306.h"
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
 // Variables
 Lifeboxes::ConfigurableNet net;
 Lifeboxes::Api api(API_ENDPOINT, JSON_BUFFER);
@@ -40,10 +33,6 @@ Servo hand;
 // Main
 void setup() {
   Serial.begin(115200);
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  clearScreen();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
 
   log((String)ESP.getResetReason().c_str() + " (" + ESP.getResetInfoPtr()->reason + ")");
   
@@ -67,8 +56,8 @@ void run() {
 
 void syncWithApi() {
   log("Syncing with API");
-  const String logValue = String(battery.currentLevel());
-  JsonObject& root = api.fetchJson("?log_value=" + logValue + "&log_key=" + LOG_API_KEY);
+  const String batteryLevel = String(battery.currentLevel());
+  JsonObject& root = api.fetchJson("?battery_level=" + batteryLevel + "&log_key=" + LOG_API_KEY);
   const int degrees = root["degrees"] | INIT_HAND_POSITION;
   setHand(degrees);
   const int cycles = root["cycles"] | DEFAULT_SLEEP_CYCLES;
@@ -89,9 +78,9 @@ void setHand(int degrees) {
   hand.write(degrees);
   log("Waiting..."); // To avoid interrupting hand
   delay(1000);
-  setServoPower(false);
   log("Detaching");
   hand.detach();
+  setServoPower(false);
 }
 
 void setServoPower(boolean powerOn) {
@@ -108,32 +97,15 @@ void setServoPower(boolean powerOn) {
 void wifiError(WiFiManager *myWiFiManager) {
   log("Wifi error");
   log((String)"Access \"" + myWiFiManager->getConfigPortalSSID() + "\" wifi hotspot");
-  log((String)"Browse to http://192.168.4.1");
+  log("Browse to http://192.168.4.1");
   setHand(INIT_HAND_POSITION);
 }
 
 void goToSleep() {
   log((String)"Sleeping. Remain:" + sleep.cyclesRemaining);
-  turnOffDisplay();
   sleep.goToSleep();
 }
 
-void log(String message) {
-  if(display.getCursorY() > SCREEN_HEIGHT) {
-    clearScreen();
-  }
-
+void log(const String message) {
   Serial.println(message);
-  display.println(message);
-  display.display();
-}
-
-void clearScreen() {
-  display.setCursor(0, 0);
-  display.clearDisplay();
-}
-
-void turnOffDisplay() {
-  delay(5000);
-  display.ssd1306_command(SSD1306_DISPLAYOFF);
 }
