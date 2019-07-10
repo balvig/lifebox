@@ -59,8 +59,8 @@ void syncWithApi() {
   const String batteryLevel = String(battery.currentLevel());
   JsonObject& root = api.fetchJson("?battery_level=" + batteryLevel + "&log_key=" + LOG_API_KEY);
   const int degrees = root["degrees"] | INIT_HAND_POSITION;
-  setHand(degrees);
   const int cycles = root["cycles"] | DEFAULT_SLEEP_CYCLES;
+  setHand(degrees);
   log((String)"New cycles: " + cycles);
   sleep.resetCyclesRemaining(cycles);
 }
